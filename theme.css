@@ -1,0 +1,1262 @@
+/*
+ * StitchCore Media Theme
+ * Target: Jellyfin Web 12.1
+ * Source repo: https://github.com/Xazirith/stitchcore-jellyfin-theme
+ */
+@import url("https://cdn.jsdelivr.net/gh/intro-skipper/intro-skipper-css@main/skip-button.min.css");
+/* =========================================================
+   STITCHCORE MEDIA CSS
+   Module 00: Tokens
+   ========================================================= */
+
+:root {
+  --sc-bg: #050206;
+  --sc-bg-deep: #010001;
+
+  --sc-panel: rgba(13, 4, 8, 0.92);
+  --sc-panel-soft: rgba(10, 3, 6, 0.72);
+
+  --sc-red: #a0001d;
+  --sc-red-bright: #e0002a;
+  --sc-red-soft: rgba(176, 0, 31, 0.38);
+  --sc-red-faint: rgba(176, 0, 31, 0.16);
+
+  --sc-text: #f6e9eb;
+  --sc-muted: #b99aa1;
+  --sc-dim: rgba(246, 233, 235, 0.58);
+
+  --sc-radius-lg: 22px;
+  --sc-radius-md: 14px;
+  --sc-radius-sm: 10px;
+
+  /* Jellyfin 12.x palette hooks.
+     These also theme newer MUI-based screens that legacy selectors do not reach. */
+  --jf-palette-primary-main: #e0002a;
+  --jf-palette-primary-mainChannel: 224 0 42;
+  --jf-palette-primary-dark: #a0001d;
+  --jf-palette-primary-light: #ff657a;
+  --jf-palette-primary-contrastText: #fff4f6;
+
+  --jf-palette-secondary-main: #e0002a;
+  --jf-palette-secondary-mainChannel: 224 0 42;
+  --jf-palette-secondary-contrastText: #fff4f6;
+
+  --jf-palette-background-default: #050206;
+  --jf-palette-background-defaultChannel: 5 2 6;
+  --jf-palette-background-paper: #0d0408;
+  --jf-palette-background-paperChannel: 13 4 8;
+
+  --jf-palette-text-primary: #f6e9eb;
+  --jf-palette-text-secondary: #b99aa1;
+  --jf-palette-divider: rgba(176, 0, 31, 0.22);
+
+  --jf-palette-AppBar-defaultBg: rgba(3, 0, 2, 0.96);
+  --jf-palette-AppBar-transparentBg: rgba(3, 0, 2, 0.82);
+  --jf-palette-AppBar-gradient:
+    linear-gradient(90deg, rgba(3, 0, 2, 0.96), rgba(16, 4, 8, 0.94), rgba(3, 0, 2, 0.96));
+
+  --jf-palette-Button-inheritContainedBg: #1a080c;
+  --jf-palette-Button-inheritContainedHoverBg: #780016;
+  --jf-card-borderRadius: 16px;
+
+  --sc-shadow-panel:
+    0 20px 48px rgba(0, 0, 0, 0.72),
+    0 0 28px rgba(120, 0, 25, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.045);
+
+  /* Intro Skipper */
+  --skip-hide-duration: 8s;
+}
+
+
+/* =========================================================
+   Module 01: Login Page Reset
+   This removes Jellyfin banner/logo only on login.
+   ========================================================= */
+
+#loginPage .skinHeader,
+.loginPage .skinHeader,
+#loginPage .mainDrawer,
+.loginPage .mainDrawer,
+#loginPage .pageTitleWithDefaultLogo,
+.loginPage .pageTitleWithDefaultLogo,
+#loginPage .pageTitle,
+.loginPage .pageTitle,
+#loginPage h1,
+.loginPage h1,
+#loginPage img[src*="jellyfin"],
+.loginPage img[src*="jellyfin"],
+#loginPage .logoIcon,
+.loginPage .logoIcon {
+  display: none !important;
+}
+
+
+/* =========================================================
+   Module 02: Login Shell
+   ========================================================= */
+
+#loginPage,
+.loginPage {
+  min-height: 100vh !important;
+  color: var(--sc-text) !important;
+
+  background:
+    radial-gradient(circle at 18% 12%, rgba(176, 0, 31, 0.20), transparent 30%),
+    radial-gradient(circle at 84% 86%, rgba(90, 0, 22, 0.32), transparent 38%),
+    linear-gradient(145deg, #070305 0%, #030102 52%, #000000 100%) !important;
+}
+
+/* Keep Jellyfin backdrop art dark and not busy */
+#loginPage .backgroundContainer,
+.loginPage .backgroundContainer,
+#loginPage .backgroundContainer.withBackdrop,
+.loginPage .backgroundContainer.withBackdrop {
+  filter: brightness(0.18) contrast(1.08) saturate(0.68) !important;
+}
+
+/* Main login layout */
+#loginPage .readOnlyContent,
+.loginPage .readOnlyContent {
+  max-width: 440px !important;
+  margin: 0 auto !important;
+  padding: 7vh 1rem 0 !important;
+}
+
+
+/* =========================================================
+   Module 03: StitchCore Brand
+   ========================================================= */
+
+#loginPage .readOnlyContent::before,
+.loginPage .readOnlyContent::before {
+  content: "STITCHCORE\A MEDIA";
+  white-space: pre;
+  display: block;
+
+  margin: 0 0 1.15rem;
+
+  color: var(--sc-text);
+  text-align: center;
+  font-size: 1.9rem;
+  line-height: 1.08;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+
+  text-shadow:
+    0 0 12px rgba(224, 0, 42, 0.58),
+    0 2px 3px rgba(0, 0, 0, 0.95);
+}
+
+
+/* =========================================================
+   Module 04: Login Card
+   ========================================================= */
+
+#loginPage .manualLoginForm,
+.loginPage .manualLoginForm {
+  position: relative;
+
+  max-width: 440px !important;
+  margin: 0 auto !important;
+  padding: 1.45rem 1.35rem 1.3rem !important;
+
+  border-radius: var(--sc-radius-lg) !important;
+  border: 1px solid var(--sc-red-soft) !important;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(16, 5, 9, 0.94),
+      rgba(4, 1, 3, 0.97)
+    ) !important;
+
+  box-shadow: var(--sc-shadow-panel) !important;
+  backdrop-filter: blur(18px);
+
+  overflow: hidden;
+}
+
+/* Small internal label */
+#loginPage .manualLoginForm::before,
+.loginPage .manualLoginForm::before {
+  content: "PRIVATE ACCESS";
+  display: block;
+
+  margin: 0 0 1rem;
+  padding-bottom: 0.75rem;
+
+  color: var(--sc-muted);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.24em;
+  text-align: center;
+  text-transform: uppercase;
+
+  border-bottom: 1px solid rgba(176, 0, 31, 0.22);
+}
+
+/* Thin red top glow */
+#loginPage .manualLoginForm::after,
+.loginPage .manualLoginForm::after {
+  content: "";
+  position: absolute;
+
+  left: 18px;
+  right: 18px;
+  top: 0;
+
+  height: 1px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(224, 0, 42, 0.72),
+      transparent
+    );
+
+  pointer-events: none;
+}
+
+
+/* =========================================================
+   Module 05: Login Form Fields
+   ========================================================= */
+
+#loginPage label,
+.loginPage label,
+#loginPage .inputLabel,
+.loginPage .inputLabel,
+#loginPage .fieldDescription,
+.loginPage .fieldDescription {
+  color: var(--sc-muted) !important;
+  font-size: 0.76rem !important;
+  font-weight: 650 !important;
+  letter-spacing: 0.035em !important;
+  text-transform: none !important;
+  text-shadow: none !important;
+}
+
+#loginPage .emby-input,
+.loginPage .emby-input,
+#loginPage input,
+.loginPage input {
+  height: 44px !important;
+
+  color: var(--sc-text) !important;
+  background: rgba(0, 0, 0, 0.42) !important;
+
+  border: 1px solid rgba(176, 0, 31, 0.28) !important;
+  border-radius: var(--sc-radius-md) !important;
+
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.025),
+    inset 0 0 12px rgba(0, 0, 0, 0.58) !important;
+
+  text-shadow: none !important;
+}
+
+#loginPage .emby-input:focus,
+.loginPage .emby-input:focus,
+#loginPage input:focus,
+.loginPage input:focus {
+  background: rgba(0, 0, 0, 0.56) !important;
+  border-color: rgba(224, 0, 42, 0.78) !important;
+
+  box-shadow:
+    0 0 0 3px rgba(224, 0, 42, 0.12),
+    0 0 16px rgba(224, 0, 42, 0.24),
+    inset 0 0 12px rgba(0, 0, 0, 0.64) !important;
+}
+
+
+/* =========================================================
+   Module 06: Login Buttons
+   Important: only the real submit button gets the red style.
+   ========================================================= */
+
+/* Remove ugly global button look from login */
+#loginPage .emby-button,
+.loginPage .emby-button,
+#loginPage .raised,
+.loginPage .raised,
+#loginPage .paper-icon-button-light,
+.loginPage .paper-icon-button-light {
+  text-shadow: none !important;
+  box-shadow: none !important;
+}
+
+/* Primary sign-in button */
+#loginPage .button-submit,
+.loginPage .button-submit,
+#loginPage .raised.button-submit,
+.loginPage .raised.button-submit,
+#loginPage button[type="submit"],
+.loginPage button[type="submit"] {
+  height: 44px !important;
+
+  color: #fff4f6 !important;
+  background:
+    linear-gradient(135deg, #780014 0%, #a0001d 58%, #d80029 100%) !important;
+
+  border: 1px solid rgba(255, 95, 120, 0.32) !important;
+  border-radius: var(--sc-radius-md) !important;
+
+  font-weight: 800 !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+
+  box-shadow:
+    0 10px 22px rgba(0, 0, 0, 0.50),
+    0 0 16px rgba(176, 0, 31, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.10) !important;
+}
+
+#loginPage .button-submit:hover,
+.loginPage .button-submit:hover,
+#loginPage button[type="submit"]:hover,
+.loginPage button[type="submit"]:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 12px 26px rgba(0, 0, 0, 0.56),
+    0 0 22px rgba(224, 0, 42, 0.46),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14) !important;
+}
+
+/* Secondary login buttons/links */
+#loginPage .emby-button:not(.button-submit),
+.loginPage .emby-button:not(.button-submit),
+#loginPage .raised:not(.button-submit),
+.loginPage .raised:not(.button-submit) {
+  color: #ff657a !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  font-weight: 600 !important;
+}
+
+#loginPage a,
+.loginPage a {
+  color: #ff657a !important;
+  text-shadow: none !important;
+}
+
+
+/* =========================================================
+   Module 07: Login Help Panel
+   ========================================================= */
+
+#loginPage .readOnlyContent::after,
+.loginPage .readOnlyContent::after {
+  content:
+    "Need access? Request a StitchCore Media account from the server owner.\A"
+    "Forgot password? Contact the server owner for account recovery.\A"
+    "Quick Connect: open Quick Connect on your device, then approve the code from a logged-in session.";
+
+  white-space: pre-line;
+  display: block;
+
+  max-width: 440px;
+  margin: 0.85rem auto 0;
+  padding: 0.85rem 0.95rem;
+
+  color: var(--sc-dim);
+  font-size: 0.76rem;
+  line-height: 1.45;
+  text-align: center;
+
+  border-radius: var(--sc-radius-md);
+  border: 1px solid var(--sc-red-faint);
+  background: rgba(0, 0, 0, 0.34);
+
+  box-shadow:
+    0 10px 24px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+
+/* =========================================================
+   Module 08: Login Bottom Disclaimer
+   ========================================================= */
+
+#loginPage::after,
+.loginPage::after {
+  content:
+    "Private StitchCore Media system. Authorized users only. Activity may be logged for security, troubleshooting, and account administration.";
+
+  position: fixed;
+  left: 50%;
+  bottom: 1rem;
+  transform: translateX(-50%);
+
+  width: min(92vw, 700px);
+  padding: 0.6rem 0.85rem;
+
+  color: rgba(246, 233, 235, 0.52);
+  font-size: 0.70rem;
+  line-height: 1.32;
+  text-align: center;
+
+  border: 1px solid rgba(176, 0, 31, 0.14);
+  border-radius: 999px;
+
+  background: rgba(0, 0, 0, 0.42);
+  backdrop-filter: blur(12px);
+}
+
+
+/* =========================================================
+   Module 09: Login Mobile
+   ========================================================= */
+
+@media (max-width: 600px) {
+  #loginPage .readOnlyContent,
+  .loginPage .readOnlyContent {
+    max-width: 100% !important;
+    padding-top: 1.5rem !important;
+  }
+
+  #loginPage .readOnlyContent::before,
+  .loginPage .readOnlyContent::before {
+    font-size: 1.48rem;
+    letter-spacing: 0.13em;
+  }
+
+  #loginPage .manualLoginForm,
+  .loginPage .manualLoginForm {
+    margin: 0 0.8rem !important;
+    padding: 1.25rem 1rem 1.15rem !important;
+    border-radius: 18px !important;
+  }
+
+  #loginPage .readOnlyContent::after,
+  .loginPage .readOnlyContent::after {
+    margin: 0.8rem 0.8rem 0;
+    font-size: 0.72rem;
+  }
+
+  #loginPage::after,
+  .loginPage::after {
+    position: static;
+    transform: none;
+    width: auto;
+    margin: 0.85rem 0.8rem;
+    border-radius: 12px;
+    font-size: 0.66rem;
+  }
+}
+
+/* =========================================================
+   STITCHCORE MEDIA CSS
+   Module 10: App Shell / Library Interior
+   ========================================================= */
+
+/* Main app background */
+html,
+body,
+.backgroundContainer {
+  background:
+    radial-gradient(circle at 12% 0%, rgba(176, 0, 31, 0.14), transparent 30%),
+    radial-gradient(circle at 95% 90%, rgba(80, 0, 18, 0.22), transparent 38%),
+    linear-gradient(145deg, #070305 0%, #030102 52%, #000000 100%) !important;
+
+  color: var(--sc-text) !important;
+}
+
+/* Darken movie/show backdrop art */
+.backdropImage,
+.backgroundContainer.withBackdrop {
+  filter: brightness(0.34) saturate(0.82) contrast(1.08) !important;
+}
+
+/* Main content readability */
+.libraryPage,
+.homePage,
+.page,
+.view,
+.mainAnimatedPage {
+  color: var(--sc-text) !important;
+}
+
+/* Soft fade overlay on detail/library pages */
+.detailPageWrapperContainer {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.94),
+      rgba(18, 0, 8, 0.74),
+      rgba(0, 0, 0, 0.34)
+    ) !important;
+}
+
+/* =========================================================
+   Module 11: Top Header / StitchCore Banner
+   ========================================================= */
+
+.skinHeader {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(3, 0, 2, 0.96),
+      rgba(16, 4, 8, 0.94),
+      rgba(3, 0, 2, 0.96)
+    ) !important;
+
+  border-bottom: 1px solid rgba(176, 0, 31, 0.26) !important;
+
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.40),
+    0 0 22px rgba(120, 0, 25, 0.24) !important;
+
+  backdrop-filter: blur(18px);
+}
+
+/* Remove default Jellyfin logo image */
+.pageTitleWithDefaultLogo {
+  background-image: none !important;
+  width: auto !important;
+  height: auto !important;
+  min-width: fit-content !important;
+}
+
+/* Header brand */
+.pageTitleWithDefaultLogo::before {
+  content: "STITCHCORE";
+  display: inline-block;
+
+  color: var(--sc-text);
+  font-size: 1.16rem;
+  font-weight: 900;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+
+  text-shadow:
+    0 0 10px rgba(224, 0, 42, 0.52),
+    0 2px 3px rgba(0, 0, 0, 0.90);
+}
+
+.pageTitleWithDefaultLogo::after {
+  content: "MEDIA";
+  display: inline-block;
+
+  margin-left: 0.72rem;
+
+  color: var(--sc-muted);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+/* Hide any nested/default logo remnants without touching normal media artwork. */
+.pageTitleWithDefaultLogo img,
+.skinHeader img[src*="jellyfin"] {
+  display: none !important;
+}
+
+/* =========================================================
+   Module 12: Sidebar / Drawer
+   ========================================================= */
+
+.mainDrawer {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(8, 2, 5, 0.96),
+      rgba(0, 0, 0, 0.98)
+    ) !important;
+
+  border-right: 1px solid rgba(176, 0, 31, 0.22) !important;
+
+  box-shadow:
+    10px 0 30px rgba(0, 0, 0, 0.48),
+    0 0 20px rgba(120, 0, 25, 0.16) !important;
+}
+
+.navMenuOption {
+  border-radius: 12px !important;
+  margin: 0.18rem 0.55rem !important;
+
+  color: var(--sc-muted) !important;
+}
+
+.navMenuOption:hover {
+  background: rgba(176, 0, 31, 0.12) !important;
+  color: var(--sc-text) !important;
+}
+
+.navMenuOption-selected {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(120, 0, 22, 0.62),
+      rgba(176, 0, 31, 0.40)
+    ) !important;
+
+  color: var(--sc-text) !important;
+
+  box-shadow:
+    0 0 14px rgba(176, 0, 31, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+}
+
+.navMenuOptionText {
+  color: inherit !important;
+  font-weight: 650 !important;
+}
+
+/* =========================================================
+   Module 13: Library Section Titles
+   ========================================================= */
+
+.sectionTitle,
+.pageTitle,
+h1,
+h2,
+h3 {
+  color: var(--sc-text) !important;
+
+  font-weight: 800 !important;
+  letter-spacing: 0.025em;
+
+  text-shadow:
+    0 0 10px rgba(176, 0, 31, 0.26),
+    0 2px 3px rgba(0, 0, 0, 0.80);
+}
+
+.sectionTitle {
+  position: relative;
+  padding-left: 0.75rem;
+}
+
+/* Small red title accent */
+.sectionTitle::before {
+  content: "";
+  position: absolute;
+
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+
+  width: 3px;
+  height: 70%;
+
+  border-radius: 999px;
+  background: linear-gradient(180deg, var(--sc-red-bright), var(--sc-red));
+  box-shadow: 0 0 10px rgba(224, 0, 42, 0.45);
+}
+
+/* =========================================================
+   Module 14: Poster / Library Cards
+   ========================================================= */
+
+.cardBox {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(13, 4, 8, 0.72),
+      rgba(0, 0, 0, 0.82)
+    ) !important;
+
+  border: 1px solid rgba(176, 0, 31, 0.16) !important;
+  border-radius: 16px !important;
+
+  overflow: hidden;
+
+  box-shadow:
+    0 12px 28px rgba(0, 0, 0, 0.58),
+    0 0 16px rgba(120, 0, 25, 0.14) !important;
+
+  transition:
+    transform 0.16s ease,
+    box-shadow 0.16s ease,
+    border-color 0.16s ease,
+    filter 0.16s ease;
+}
+
+.cardBox:hover {
+  transform: translateY(-4px) scale(1.018);
+
+  border-color: rgba(224, 0, 42, 0.42) !important;
+
+  box-shadow:
+    0 18px 38px rgba(0, 0, 0, 0.70),
+    0 0 24px rgba(224, 0, 42, 0.28) !important;
+}
+
+/* Poster rounding */
+.cardImage,
+.cardContent,
+.cardScalable,
+.itemDetailImage,
+.detailImageContainer .cardImage {
+  border-radius: 14px !important;
+}
+
+/* Slightly dim posters until hover */
+.cardBox .cardImage {
+  filter: brightness(0.92) contrast(1.04) saturate(0.92);
+  transition: filter 0.16s ease;
+}
+
+.cardBox:hover .cardImage {
+  filter: brightness(1.04) contrast(1.06) saturate(1.02);
+}
+
+/* =========================================================
+   Module 15: Card Text / Metadata
+   ========================================================= */
+
+.cardText,
+.cardText-first,
+.listItemBodyText {
+  color: var(--sc-text) !important;
+  font-weight: 650 !important;
+  text-shadow: 0 2px 3px rgba(0, 0, 0, 0.72);
+}
+
+.cardText-secondary,
+.listItemBodyText-secondary,
+.secondaryText,
+.fieldDescription {
+  color: var(--sc-muted) !important;
+  font-weight: 500 !important;
+}
+
+/* Cleaner text spacing */
+.cardText {
+  letter-spacing: 0.01em;
+}
+
+.cardText-secondary {
+  opacity: 0.88;
+}
+
+/* =========================================================
+   Module 16: Progress Bars / Watched State
+   ========================================================= */
+
+.itemProgressBar {
+  height: 4px !important;
+  border-radius: 999px !important;
+
+  background: rgba(255, 255, 255, 0.08) !important;
+  overflow: hidden;
+}
+
+.itemProgressBarForeground {
+  border-radius: 999px !important;
+
+  background:
+    linear-gradient(
+      90deg,
+      #7a0015,
+      var(--sc-red-bright)
+    ) !important;
+
+  box-shadow: 0 0 10px rgba(224, 0, 42, 0.48);
+}
+
+/* Watched check / indicators */
+.playedIndicator,
+.countIndicator,
+.fullSyncIndicator {
+  background:
+    linear-gradient(135deg, #780014, var(--sc-red-bright)) !important;
+
+  color: #fff4f6 !important;
+
+  box-shadow:
+    0 0 12px rgba(224, 0, 42, 0.44),
+    0 4px 12px rgba(0, 0, 0, 0.45) !important;
+}
+
+/* =========================================================
+   Module 17: Interior Buttons / Pills
+   Scoped for inside app, not login.
+   ========================================================= */
+
+.emby-button,
+.raised,
+.paper-icon-button-light {
+  border-radius: 13px !important;
+
+  color: var(--sc-text) !important;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(26, 8, 12, 0.82),
+      rgba(8, 2, 4, 0.88)
+    ) !important;
+
+  border: 1px solid rgba(176, 0, 31, 0.24) !important;
+
+  box-shadow:
+    0 8px 18px rgba(0, 0, 0, 0.38),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
+
+  text-shadow: none !important;
+}
+
+.emby-button:hover,
+.raised:hover,
+.paper-icon-button-light:hover {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(120, 0, 22, 0.62),
+      rgba(32, 4, 10, 0.88)
+    ) !important;
+
+  border-color: rgba(224, 0, 42, 0.42) !important;
+
+  box-shadow:
+    0 10px 24px rgba(0, 0, 0, 0.48),
+    0 0 18px rgba(224, 0, 42, 0.26),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+}
+
+/* Primary submit/action buttons */
+.button-submit,
+.emby-button.block.raised {
+  background:
+    linear-gradient(135deg, #780014 0%, #a0001d 58%, #d80029 100%) !important;
+
+  border-color: rgba(255, 95, 120, 0.32) !important;
+}
+
+/* =========================================================
+   Module 18: Dialogs / Menus / Popups
+   ========================================================= */
+
+.dialog,
+.actionSheet,
+.popup,
+.paperList,
+.visualCardBox {
+  color: var(--sc-text) !important;
+
+  background:
+    radial-gradient(circle at top left, rgba(120, 0, 26, 0.16), transparent 36%),
+    linear-gradient(145deg, rgba(13, 4, 8, 0.96), rgba(0, 0, 0, 0.98)) !important;
+
+  border: 1px solid rgba(176, 0, 31, 0.26) !important;
+  border-radius: 18px !important;
+
+  box-shadow:
+    0 20px 52px rgba(0, 0, 0, 0.78),
+    0 0 28px rgba(120, 0, 25, 0.24) !important;
+}
+
+/* =========================================================
+   Module 19: Inputs / Selects / Textareas Inside App
+   ========================================================= */
+
+.emby-input,
+.emby-select,
+.emby-textarea {
+  color: var(--sc-text) !important;
+
+  background: rgba(0, 0, 0, 0.42) !important;
+
+  border: 1px solid rgba(176, 0, 31, 0.28) !important;
+  border-radius: 12px !important;
+
+  box-shadow:
+    inset 0 0 12px rgba(0, 0, 0, 0.58) !important;
+}
+
+.emby-input:focus,
+.emby-select:focus,
+.emby-textarea:focus {
+  border-color: rgba(224, 0, 42, 0.78) !important;
+
+  box-shadow:
+    0 0 0 3px rgba(224, 0, 42, 0.12),
+    0 0 16px rgba(224, 0, 42, 0.22),
+    inset 0 0 12px rgba(0, 0, 0, 0.64) !important;
+}
+
+.emby-input:focus,
+.emby-select:focus,
+.emby-textarea:focus {
+  border-color: rgba(224, 0, 42, 0.78) !important;
+
+  box-shadow:
+    0 0 0 3px rgba(224, 0, 42, 0.12),
+    0 0 16px rgba(224, 0, 42, 0.22),
+    inset 0 0 12px rgba(0, 0, 0, 0.64) !important;
+}
+
+/* =========================================================
+   STITCHCORE MEDIA CSS
+   Module 21: Seasons / Episodes
+   ========================================================= */
+
+.listItem,
+.paperList .listItem {
+  border-radius: 16px !important;
+  margin: 0.35rem 0 !important;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(13, 4, 8, 0.62),
+      rgba(0, 0, 0, 0.72)
+    ) !important;
+
+  border: 1px solid rgba(176, 0, 31, 0.13) !important;
+
+  box-shadow:
+    0 8px 20px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.025) !important;
+}
+
+.listItem:hover {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(30, 8, 14, 0.72),
+      rgba(6, 1, 3, 0.82)
+    ) !important;
+
+  border-color: rgba(224, 0, 42, 0.30) !important;
+
+  box-shadow:
+    0 10px 24px rgba(0, 0, 0, 0.44),
+    0 0 18px rgba(224, 0, 42, 0.18) !important;
+}
+
+/* Episode thumbnails */
+.listItemImage,
+.listItemImageButton,
+.chapterThumb {
+  border-radius: 12px !important;
+  overflow: hidden;
+
+  box-shadow:
+    0 8px 18px rgba(0, 0, 0, 0.48) !important;
+}
+
+/* Episode title */
+.listItemBodyText {
+  color: var(--sc-text) !important;
+  font-weight: 700 !important;
+}
+
+/* Episode secondary text */
+.listItemBodyText-secondary {
+  color: var(--sc-muted) !important;
+}
+
+/* =========================================================
+   STITCHCORE MEDIA CSS
+   Module 22: Video Player Polish
+   Keep this light so the player does not break.
+   ========================================================= */
+
+/* Player controls background */
+.videoOsdBottom,
+.nowPlayingBar,
+.osdHeader {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.00),
+      rgba(0, 0, 0, 0.72)
+    ) !important;
+}
+
+/* Player buttons */
+.videoOsdBottom .emby-button,
+.osdHeader .emby-button,
+.nowPlayingBar .emby-button,
+.videoOsdBottom .paper-icon-button-light,
+.osdHeader .paper-icon-button-light {
+  color: #f6e9eb !important;
+
+  background: rgba(0, 0, 0, 0.28) !important;
+  border: 1px solid rgba(176, 0, 31, 0.18) !important;
+  border-radius: 999px !important;
+
+  box-shadow:
+    0 6px 18px rgba(0, 0, 0, 0.38) !important;
+}
+
+.videoOsdBottom .emby-button:hover,
+.osdHeader .emby-button:hover,
+.videoOsdBottom .paper-icon-button-light:hover,
+.osdHeader .paper-icon-button-light:hover {
+  background: rgba(176, 0, 31, 0.30) !important;
+  border-color: rgba(224, 0, 42, 0.38) !important;
+}
+
+/* Player progress / seek bar */
+.mdl-slider-background-lower,
+.sliderBubble,
+.nowPlayingBar .itemProgressBarForeground {
+  background:
+    linear-gradient(90deg, #780014, #e0002a) !important;
+
+  box-shadow:
+    0 0 10px rgba(224, 0, 42, 0.48) !important;
+}
+
+/* Progress thumb */
+.mdl-slider::-webkit-slider-thumb,
+.mdl-slider::-moz-range-thumb {
+  background: #f6e9eb !important;
+  box-shadow:
+    0 0 0 4px rgba(224, 0, 42, 0.22),
+    0 0 14px rgba(224, 0, 42, 0.55) !important;
+}
+
+/* Menus opened inside player */
+.actionSheet,
+.dialog {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(13, 4, 8, 0.98),
+      rgba(0, 0, 0, 0.98)
+    ) !important;
+
+  border: 1px solid rgba(176, 0, 31, 0.28) !important;
+}
+
+
+/* =========================================================
+   STITCHCORE MEDIA CSS
+   Module 90: TV Layout / Couch Mode
+   ========================================================= */
+
+.layout-tv {
+  --sc-tv-card-radius: 22px;
+  --sc-tv-focus-scale: 1.06;
+}
+
+/* TV base readability */
+.layout-tv,
+.layout-tv body {
+  font-size: 1.06em !important;
+}
+
+/* TV header */
+.layout-tv .skinHeader {
+  min-height: 4.25rem !important;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(3, 0, 2, 0.98),
+      rgba(18, 4, 9, 0.96),
+      rgba(3, 0, 2, 0.98)
+    ) !important;
+
+  border-bottom: 1px solid rgba(176, 0, 31, 0.30) !important;
+
+  box-shadow:
+    0 12px 34px rgba(0, 0, 0, 0.50),
+    0 0 26px rgba(120, 0, 25, 0.24) !important;
+}
+
+/* TV brand sizing */
+.layout-tv .pageTitleWithDefaultLogo::before {
+  font-size: 1.35rem !important;
+  letter-spacing: 0.16em !important;
+}
+
+.layout-tv .pageTitleWithDefaultLogo::after {
+  font-size: 0.78rem !important;
+}
+
+/* Bigger section titles for couch distance */
+.layout-tv .sectionTitle,
+.layout-tv .pageTitle,
+.layout-tv h1,
+.layout-tv h2 {
+  font-size: 1.35em !important;
+  letter-spacing: 0.035em !important;
+}
+
+/* TV cards */
+.layout-tv .cardBox {
+  border-radius: var(--sc-tv-card-radius) !important;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(14, 4, 8, 0.78),
+      rgba(0, 0, 0, 0.88)
+    ) !important;
+
+  border: 1px solid rgba(176, 0, 31, 0.20) !important;
+
+  box-shadow:
+    0 18px 42px rgba(0, 0, 0, 0.68),
+    0 0 22px rgba(120, 0, 25, 0.18) !important;
+
+  transition:
+    transform 0.14s ease,
+    box-shadow 0.14s ease,
+    border-color 0.14s ease,
+    filter 0.14s ease !important;
+}
+
+/* TV focus is more important than hover */
+.layout-tv .cardBox:focus,
+.layout-tv .cardBox:hover,
+.layout-tv .card:focus .cardBox,
+.layout-tv .card:focus-within .cardBox,
+.layout-tv .card:has(:focus) .cardBox {
+  transform: scale(var(--sc-tv-focus-scale)) !important;
+
+  border-color: rgba(224, 0, 42, 0.64) !important;
+
+  box-shadow:
+    0 26px 58px rgba(0, 0, 0, 0.82),
+    0 0 38px rgba(224, 0, 42, 0.48) !important;
+
+  z-index: 5;
+}
+
+/* Poster rounding */
+.layout-tv .cardImage,
+.layout-tv .cardContent,
+.layout-tv .cardScalable {
+  border-radius: 20px !important;
+}
+
+/* TV card text */
+.layout-tv .cardText,
+.layout-tv .cardText-first,
+.layout-tv .listItemBodyText {
+  font-size: 1.08em !important;
+  font-weight: 750 !important;
+}
+
+.layout-tv .cardText-secondary,
+.layout-tv .listItemBodyText-secondary,
+.layout-tv .secondaryText {
+  font-size: 1em !important;
+  color: var(--sc-muted) !important;
+}
+
+/* TV sidebar */
+.layout-tv .mainDrawer {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(8, 2, 5, 0.98),
+      rgba(0, 0, 0, 0.98)
+    ) !important;
+
+  border-right: 1px solid rgba(176, 0, 31, 0.26) !important;
+}
+
+.layout-tv .navMenuOption {
+  min-height: 3.1rem !important;
+  border-radius: 16px !important;
+  margin: 0.24rem 0.65rem !important;
+}
+
+.layout-tv .navMenuOption-selected {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(120, 0, 22, 0.72),
+      rgba(176, 0, 31, 0.46)
+    ) !important;
+
+  box-shadow:
+    0 0 20px rgba(176, 0, 31, 0.36),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+}
+
+/* TV buttons */
+.layout-tv .emby-button,
+.layout-tv .raised,
+.layout-tv .paper-icon-button-light {
+  min-height: 3rem !important;
+  border-radius: 16px !important;
+  font-size: 1.04em !important;
+}
+
+/* TV detail pages */
+.layout-tv .detailPageWrapperContainer {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.97) 0%,
+      rgba(12, 2, 6, 0.88) 38%,
+      rgba(45, 0, 12, 0.42) 72%,
+      rgba(0, 0, 0, 0.20) 100%
+    ) !important;
+}
+
+.layout-tv .backdropImage {
+  filter:
+    brightness(0.30)
+    contrast(1.12)
+    saturate(0.82) !important;
+}
+
+.layout-tv .overview,
+.layout-tv .detailOverview,
+.layout-tv .itemOverview {
+  font-size: 1.1em !important;
+  line-height: 1.72 !important;
+  max-width: 940px !important;
+}
+
+/* TV episode/list rows */
+.layout-tv .listItem,
+.layout-tv .paperList .listItem {
+  min-height: 5rem !important;
+  border-radius: 18px !important;
+  margin: 0.45rem 0 !important;
+}
+
+.layout-tv .listItem:hover,
+.layout-tv .listItem:focus,
+.layout-tv .listItem:focus-within {
+  border-color: rgba(224, 0, 42, 0.40) !important;
+
+  box-shadow:
+    0 14px 34px rgba(0, 0, 0, 0.58),
+    0 0 24px rgba(224, 0, 42, 0.28) !important;
+}
+
+/* TV progress bars */
+.layout-tv .itemProgressBar {
+  height: 5px !important;
+}
+
+/* TV player controls: light touch */
+.layout-tv .videoOsdBottom .emby-button,
+.layout-tv .osdHeader .emby-button,
+.layout-tv .nowPlayingBar .emby-button,
+.layout-tv .videoOsdBottom .paper-icon-button-light,
+.layout-tv .osdHeader .paper-icon-button-light {
+  min-height: 3.2rem !important;
+  min-width: 3.2rem !important;
+  border-radius: 999px !important;
+
+  background: rgba(0, 0, 0, 0.34) !important;
+  border: 1px solid rgba(176, 0, 31, 0.22) !important;
+}
+
+/* TV player progress */
+.layout-tv .mdl-slider-background-lower,
+.layout-tv .nowPlayingBar .itemProgressBarForeground {
+  background:
+    linear-gradient(90deg, #780014, var(--sc-red-bright)) !important;
+
+  box-shadow:
+    0 0 12px rgba(224, 0, 42, 0.52) !important;
+}
