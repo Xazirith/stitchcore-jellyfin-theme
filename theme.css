@@ -3,7 +3,7 @@
  * Target: Jellyfin Web 12.1
  * Source repo: https://github.com/Xazirith/stitchcore-jellyfin-theme
  */
-@import url("https://cdn.jsdelivr.net/gh/intro-skipper/intro-skipper-css@main/skip-button.min.css");
+@import url("https://cdn.jsdelivr.net/gh/intro-skipper/intro-skipper-css@main/skip-button.css");
 /* =========================================================
    STITCHCORE MEDIA CSS
    Module 00: Tokens
@@ -64,8 +64,16 @@
     0 0 28px rgba(120, 0, 25, 0.28),
     inset 0 1px 0 rgba(255, 255, 255, 0.045);
 
-  /* Intro Skipper */
+  /* Intro Skipper / StitchCore integration */
   --skip-hide-duration: 8s;
+  --headerColor: rgba(8, 2, 5, 0.90);
+  --textColor: #f6e9eb;
+  --accentColor: rgba(224, 0, 42, 0.92);
+  --darkerGradientPoint: #050206;
+  --shadow: 0 6px 18px rgba(0, 0, 0, 0.42);
+  --borderWidthDouble: 0.10em;
+  --largerRadius: 0.9em;
+  --highlightOutlineColor: #ff657a;
 }
 
 
@@ -452,28 +460,34 @@
 
 /* =========================================================
    STITCHCORE MEDIA CSS
-   Module 10: App Shell / Library Interior
+   Module 10: Jellyfin 12.1 App Skin
+   IMPORTANT: visuals only. Jellyfin owns layout/spacing.
    ========================================================= */
 
-/* Main app background */
+/* Base surfaces */
 html,
 body,
 .backgroundContainer {
-  background:
-    radial-gradient(circle at 12% 0%, rgba(176, 0, 31, 0.14), transparent 30%),
-    radial-gradient(circle at 95% 90%, rgba(80, 0, 18, 0.22), transparent 38%),
-    linear-gradient(145deg, #070305 0%, #030102 52%, #000000 100%) !important;
-
   color: var(--sc-text) !important;
+  background-color: var(--sc-bg) !important;
 }
 
-/* Darken movie/show backdrop art */
-.backdropImage,
+.backgroundContainer:not(.withBackdrop) {
+  background-image:
+    radial-gradient(circle at 12% 0%, rgba(176, 0, 31, 0.12), transparent 31%),
+    radial-gradient(circle at 94% 92%, rgba(80, 0, 18, 0.18), transparent 38%),
+    linear-gradient(145deg, #070305 0%, #030102 52%, #000 100%) !important;
+}
+
+/* Let Jellyfin keep backdrop placement and sizing. Only grade the image. */
+.backdropImage {
+  filter: brightness(0.38) saturate(0.84) contrast(1.06) !important;
+}
+
 .backgroundContainer.withBackdrop {
-  filter: brightness(0.34) saturate(0.82) contrast(1.08) !important;
+  background-color: #050206 !important;
 }
 
-/* Main content readability */
 .libraryPage,
 .homePage,
 .page,
@@ -482,135 +496,94 @@ body,
   color: var(--sc-text) !important;
 }
 
-/* Soft fade overlay on detail/library pages */
-.detailPageWrapperContainer {
-  background:
-    linear-gradient(
-      90deg,
-      rgba(0, 0, 0, 0.94),
-      rgba(18, 0, 8, 0.74),
-      rgba(0, 0, 0, 0.34)
-    ) !important;
-}
-
 /* =========================================================
-   Module 11: Top Header / StitchCore Banner
+   Module 11: Header / Brand
    ========================================================= */
 
-.skinHeader {
-  background:
-    linear-gradient(
-      90deg,
-      rgba(3, 0, 2, 0.96),
-      rgba(16, 4, 8, 0.94),
-      rgba(3, 0, 2, 0.96)
-    ) !important;
-
-  border-bottom: 1px solid rgba(176, 0, 31, 0.26) !important;
-
-  box-shadow:
-    0 10px 30px rgba(0, 0, 0, 0.40),
-    0 0 22px rgba(120, 0, 25, 0.24) !important;
-
-  backdrop-filter: blur(18px);
+.skinHeader,
+.skinHeader-withBackground {
+  background-color: rgba(3, 0, 2, 0.94) !important;
+  background-image:
+    linear-gradient(90deg, rgba(3, 0, 2, 0.96), rgba(16, 4, 8, 0.94), rgba(3, 0, 2, 0.96)) !important;
+  border-bottom: 1px solid rgba(176, 0, 31, 0.24) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.38) !important;
+  backdrop-filter: blur(14px);
 }
 
-/* Remove default Jellyfin logo image */
+/* Replace only Jellyfin's default header logo artwork. Do not change its geometry. */
 .pageTitleWithDefaultLogo {
   background-image: none !important;
-  width: auto !important;
-  height: auto !important;
-  min-width: fit-content !important;
 }
 
-/* Header brand */
 .pageTitleWithDefaultLogo::before {
   content: "STITCHCORE";
-  display: inline-block;
-
   color: var(--sc-text);
-  font-size: 1.16rem;
   font-weight: 900;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-
-  text-shadow:
-    0 0 10px rgba(224, 0, 42, 0.52),
-    0 2px 3px rgba(0, 0, 0, 0.90);
+  text-shadow: 0 0 10px rgba(224, 0, 42, 0.46);
 }
 
 .pageTitleWithDefaultLogo::after {
-  content: "MEDIA";
-  display: inline-block;
-
-  margin-left: 0.72rem;
-
+  content: " MEDIA";
   color: var(--sc-muted);
-  font-size: 0.68rem;
+  font-size: 0.62em;
   font-weight: 800;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
 }
 
-/* Hide any nested/default logo remnants without touching normal media artwork. */
 .pageTitleWithDefaultLogo img,
 .skinHeader img[src*="jellyfin"] {
   display: none !important;
 }
 
+/* Header icons: color only. No borders, padding, sizing, or box model changes. */
+.skinHeader .paper-icon-button-light,
+.skinHeader .emby-button {
+  color: var(--sc-text) !important;
+}
+
+.skinHeader .paper-icon-button-light:hover,
+.skinHeader .emby-button:hover {
+  color: #ff657a !important;
+  background-color: rgba(176, 0, 31, 0.13) !important;
+}
+
 /* =========================================================
-   Module 12: Sidebar / Drawer
+   Module 12: Drawer / Navigation
    ========================================================= */
 
 .mainDrawer {
-  background:
-    linear-gradient(
-      180deg,
-      rgba(8, 2, 5, 0.96),
-      rgba(0, 0, 0, 0.98)
-    ) !important;
-
-  border-right: 1px solid rgba(176, 0, 31, 0.22) !important;
-
-  box-shadow:
-    10px 0 30px rgba(0, 0, 0, 0.48),
-    0 0 20px rgba(120, 0, 25, 0.16) !important;
+  background-color: rgba(5, 1, 3, 0.98) !important;
+  background-image: linear-gradient(180deg, rgba(10, 3, 6, 0.98), #000) !important;
+  border-right: 1px solid rgba(176, 0, 31, 0.20) !important;
+  box-shadow: 8px 0 24px rgba(0, 0, 0, 0.42) !important;
 }
 
 .navMenuOption {
-  border-radius: 12px !important;
-  margin: 0.18rem 0.55rem !important;
-
   color: var(--sc-muted) !important;
+  border-radius: 10px !important;
 }
 
 .navMenuOption:hover {
-  background: rgba(176, 0, 31, 0.12) !important;
   color: var(--sc-text) !important;
+  background-color: rgba(176, 0, 31, 0.11) !important;
 }
 
 .navMenuOption-selected {
-  background:
-    linear-gradient(
-      135deg,
-      rgba(120, 0, 22, 0.62),
-      rgba(176, 0, 31, 0.40)
-    ) !important;
-
   color: var(--sc-text) !important;
-
-  box-shadow:
-    0 0 14px rgba(176, 0, 31, 0.28),
-    inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+  background-color: rgba(160, 0, 29, 0.32) !important;
+  background-image: linear-gradient(135deg, rgba(120, 0, 22, 0.52), rgba(176, 0, 31, 0.28)) !important;
+  box-shadow: inset 3px 0 0 var(--sc-red-bright) !important;
 }
 
 .navMenuOptionText {
   color: inherit !important;
-  font-weight: 650 !important;
 }
 
 /* =========================================================
-   Module 13: Library Section Titles
+   Module 13: Type
    ========================================================= */
 
 .sectionTitle,
@@ -619,644 +592,291 @@ h1,
 h2,
 h3 {
   color: var(--sc-text) !important;
-
-  font-weight: 800 !important;
-  letter-spacing: 0.025em;
-
-  text-shadow:
-    0 0 10px rgba(176, 0, 31, 0.26),
-    0 2px 3px rgba(0, 0, 0, 0.80);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.72);
 }
 
-.sectionTitle {
-  position: relative;
-  padding-left: 0.75rem;
-}
-
-/* Small red title accent */
-.sectionTitle::before {
-  content: "";
-  position: absolute;
-
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-
-  width: 3px;
-  height: 70%;
-
-  border-radius: 999px;
-  background: linear-gradient(180deg, var(--sc-red-bright), var(--sc-red));
-  box-shadow: 0 0 10px rgba(224, 0, 42, 0.45);
+.secondaryText,
+.fieldDescription,
+.cardText-secondary,
+.listItemBodyText-secondary {
+  color: var(--sc-muted) !important;
 }
 
 /* =========================================================
-   Module 14: Poster / Library Cards
+   Module 14: Cards
+   Never alter card margin/padding/width/height/overflow/transform here.
    ========================================================= */
 
-.cardBox {
-  background:
-    linear-gradient(
-      180deg,
-      rgba(13, 4, 8, 0.72),
-      rgba(0, 0, 0, 0.82)
-    ) !important;
-
-  border: 1px solid rgba(176, 0, 31, 0.16) !important;
-  border-radius: 16px !important;
-
-  overflow: hidden;
-
-  box-shadow:
-    0 12px 28px rgba(0, 0, 0, 0.58),
-    0 0 16px rgba(120, 0, 25, 0.14) !important;
-
-  transition:
-    transform 0.16s ease,
-    box-shadow 0.16s ease,
-    border-color 0.16s ease,
-    filter 0.16s ease;
-}
-
-.cardBox:hover {
-  transform: translateY(-4px) scale(1.018);
-
-  border-color: rgba(224, 0, 42, 0.42) !important;
-
-  box-shadow:
-    0 18px 38px rgba(0, 0, 0, 0.70),
-    0 0 24px rgba(224, 0, 42, 0.28) !important;
-}
-
-/* Poster rounding */
-.cardImage,
 .cardContent,
-.cardScalable,
-.itemDetailImage,
-.detailImageContainer .cardImage {
-  border-radius: 14px !important;
+.cardImageContainer,
+.cardBox:not(.visualCardBox) .cardPadder,
+.blurhash-canvas {
+  border-radius: var(--jf-card-borderRadius, 16px) !important;
 }
 
-/* Slightly dim posters until hover */
-.cardBox .cardImage {
-  filter: brightness(0.92) contrast(1.04) saturate(0.92);
-  transition: filter 0.16s ease;
+/* Visual cards are cards, NOT dialogs. Keep the effect deliberately light. */
+.cardBox.visualCardBox {
+  background-color: rgba(10, 3, 6, 0.38) !important;
+  border: 1px solid rgba(176, 0, 31, 0.12) !important;
+  border-radius: var(--jf-card-borderRadius, 16px) !important;
+  box-shadow: 0 7px 20px rgba(0, 0, 0, 0.38) !important;
 }
 
-.cardBox:hover .cardImage {
-  filter: brightness(1.04) contrast(1.06) saturate(1.02);
+.cardBox:not(.visualCardBox) .cardScalable {
+  border-radius: var(--jf-card-borderRadius, 16px) !important;
+  box-shadow: 0 7px 20px rgba(0, 0, 0, 0.34) !important;
 }
 
-/* =========================================================
-   Module 15: Card Text / Metadata
-   ========================================================= */
+.card.show-animation:focus > .cardBox,
+.card:focus .cardBox,
+.card:hover .cardBox {
+  filter: brightness(1.04);
+}
+
+.card:focus .cardContent,
+.card:focus .cardImageContainer {
+  outline: 2px solid rgba(224, 0, 42, 0.70);
+  outline-offset: 2px;
+}
+
+.cardImage {
+  filter: brightness(0.94) saturate(0.95);
+  transition: filter 160ms ease;
+}
+
+.card:hover .cardImage,
+.card:focus .cardImage {
+  filter: brightness(1.04) saturate(1.02);
+}
 
 .cardText,
 .cardText-first,
 .listItemBodyText {
   color: var(--sc-text) !important;
-  font-weight: 650 !important;
-  text-shadow: 0 2px 3px rgba(0, 0, 0, 0.72);
-}
-
-.cardText-secondary,
-.listItemBodyText-secondary,
-.secondaryText,
-.fieldDescription {
-  color: var(--sc-muted) !important;
-  font-weight: 500 !important;
-}
-
-/* Cleaner text spacing */
-.cardText {
-  letter-spacing: 0.01em;
-}
-
-.cardText-secondary {
-  opacity: 0.88;
 }
 
 /* =========================================================
-   Module 16: Progress Bars / Watched State
+   Module 15: Progress / Indicators
    ========================================================= */
 
 .itemProgressBar {
-  height: 4px !important;
-  border-radius: 999px !important;
-
-  background: rgba(255, 255, 255, 0.08) !important;
-  overflow: hidden;
+  background: rgba(255, 255, 255, 0.10) !important;
 }
 
 .itemProgressBarForeground {
-  border-radius: 999px !important;
-
-  background:
-    linear-gradient(
-      90deg,
-      #7a0015,
-      var(--sc-red-bright)
-    ) !important;
-
-  box-shadow: 0 0 10px rgba(224, 0, 42, 0.48);
+  background: linear-gradient(90deg, #780014, var(--sc-red-bright)) !important;
 }
 
-/* Watched check / indicators */
 .playedIndicator,
 .countIndicator,
 .fullSyncIndicator {
-  background:
-    linear-gradient(135deg, #780014, var(--sc-red-bright)) !important;
-
   color: #fff4f6 !important;
-
-  box-shadow:
-    0 0 12px rgba(224, 0, 42, 0.44),
-    0 4px 12px rgba(0, 0, 0, 0.45) !important;
+  background: linear-gradient(135deg, #780014, var(--sc-red-bright)) !important;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.42) !important;
 }
 
 /* =========================================================
-   Module 17: Interior Buttons / Pills
-   Scoped for inside app, not login.
+   Module 16: Buttons
+   Raised/action buttons only. Icon buttons retain Jellyfin geometry.
    ========================================================= */
 
-.emby-button,
-.raised,
-.paper-icon-button-light {
-  border-radius: 13px !important;
-
+.raised:not(.paper-icon-button-light),
+.button-submit {
   color: var(--sc-text) !important;
-
-  background:
-    linear-gradient(
-      180deg,
-      rgba(26, 8, 12, 0.82),
-      rgba(8, 2, 4, 0.88)
-    ) !important;
-
-  border: 1px solid rgba(176, 0, 31, 0.24) !important;
-
-  box-shadow:
-    0 8px 18px rgba(0, 0, 0, 0.38),
-    inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
-
-  text-shadow: none !important;
+  background-color: rgba(26, 8, 12, 0.88) !important;
+  background-image: linear-gradient(180deg, rgba(30, 8, 14, 0.88), rgba(8, 2, 4, 0.92)) !important;
+  border-color: rgba(176, 0, 31, 0.24) !important;
+  border-radius: 10px !important;
 }
 
-.emby-button:hover,
-.raised:hover,
-.paper-icon-button-light:hover {
-  background:
-    linear-gradient(
-      180deg,
-      rgba(120, 0, 22, 0.62),
-      rgba(32, 4, 10, 0.88)
-    ) !important;
-
-  border-color: rgba(224, 0, 42, 0.42) !important;
-
-  box-shadow:
-    0 10px 24px rgba(0, 0, 0, 0.48),
-    0 0 18px rgba(224, 0, 42, 0.26),
-    inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+.raised:not(.paper-icon-button-light):hover {
+  background-color: rgba(90, 0, 20, 0.78) !important;
+  border-color: rgba(224, 0, 42, 0.40) !important;
 }
 
-/* Primary submit/action buttons */
-.button-submit,
-.emby-button.block.raised {
-  background:
-    linear-gradient(135deg, #780014 0%, #a0001d 58%, #d80029 100%) !important;
+.button-submit {
+  color: #fff4f6 !important;
+  background-image: linear-gradient(135deg, #780014, #a0001d 58%, #d80029) !important;
+}
 
-  border-color: rgba(255, 95, 120, 0.32) !important;
+.paper-icon-button-light {
+  color: var(--sc-text) !important;
+}
+
+.paper-icon-button-light:hover:not(:disabled) {
+  color: #ff657a !important;
+  background-color: rgba(176, 0, 31, 0.14) !important;
 }
 
 /* =========================================================
-   Module 18: Dialogs / Menus / Popups
+   Module 17: Dialogs / Sheets / Menus
    ========================================================= */
 
 .dialog,
 .actionSheet,
-.popup,
-.paperList,
-.visualCardBox {
+.popup {
   color: var(--sc-text) !important;
+  background-color: rgba(8, 2, 5, 0.98) !important;
+  background-image:
+    radial-gradient(circle at top left, rgba(120, 0, 26, 0.12), transparent 36%),
+    linear-gradient(145deg, rgba(13, 4, 8, 0.98), rgba(0, 0, 0, 0.98)) !important;
+  border: 1px solid rgba(176, 0, 31, 0.24) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.72) !important;
+}
 
-  background:
-    radial-gradient(circle at top left, rgba(120, 0, 26, 0.16), transparent 36%),
-    linear-gradient(145deg, rgba(13, 4, 8, 0.96), rgba(0, 0, 0, 0.98)) !important;
-
-  border: 1px solid rgba(176, 0, 31, 0.26) !important;
-  border-radius: 18px !important;
-
-  box-shadow:
-    0 20px 52px rgba(0, 0, 0, 0.78),
-    0 0 28px rgba(120, 0, 25, 0.24) !important;
+/* Lists are lists — no giant dialog shadow/border around them. */
+.paperList {
+  background-color: rgba(8, 2, 5, 0.48) !important;
+  border-radius: 10px !important;
 }
 
 /* =========================================================
-   Module 19: Inputs / Selects / Textareas Inside App
+   Module 18: Inputs
    ========================================================= */
 
 .emby-input,
 .emby-select,
 .emby-textarea {
   color: var(--sc-text) !important;
-
-  background: rgba(0, 0, 0, 0.42) !important;
-
-  border: 1px solid rgba(176, 0, 31, 0.28) !important;
-  border-radius: 12px !important;
-
-  box-shadow:
-    inset 0 0 12px rgba(0, 0, 0, 0.58) !important;
+  background-color: rgba(0, 0, 0, 0.38) !important;
+  border-color: rgba(176, 0, 31, 0.26) !important;
+  border-radius: 9px !important;
 }
 
 .emby-input:focus,
 .emby-select:focus,
 .emby-textarea:focus {
-  border-color: rgba(224, 0, 42, 0.78) !important;
-
-  box-shadow:
-    0 0 0 3px rgba(224, 0, 42, 0.12),
-    0 0 16px rgba(224, 0, 42, 0.22),
-    inset 0 0 12px rgba(0, 0, 0, 0.64) !important;
-}
-
-.emby-input:focus,
-.emby-select:focus,
-.emby-textarea:focus {
-  border-color: rgba(224, 0, 42, 0.78) !important;
-
-  box-shadow:
-    0 0 0 3px rgba(224, 0, 42, 0.12),
-    0 0 16px rgba(224, 0, 42, 0.22),
-    inset 0 0 12px rgba(0, 0, 0, 0.64) !important;
+  border-color: rgba(224, 0, 42, 0.72) !important;
+  box-shadow: 0 0 0 2px rgba(224, 0, 42, 0.12) !important;
 }
 
 /* =========================================================
-   STITCHCORE MEDIA CSS
-   Module 21: Seasons / Episodes
+   Module 19: Episodes / Rows
+   No custom margins or minimum heights.
    ========================================================= */
 
 .listItem,
 .paperList .listItem {
-  border-radius: 16px !important;
-  margin: 0.35rem 0 !important;
-
-  background:
-    linear-gradient(
-      180deg,
-      rgba(13, 4, 8, 0.62),
-      rgba(0, 0, 0, 0.72)
-    ) !important;
-
-  border: 1px solid rgba(176, 0, 31, 0.13) !important;
-
-  box-shadow:
-    0 8px 20px rgba(0, 0, 0, 0.34),
-    inset 0 1px 0 rgba(255, 255, 255, 0.025) !important;
+  color: var(--sc-text) !important;
+  background-color: rgba(10, 3, 6, 0.34) !important;
+  border: 1px solid rgba(176, 0, 31, 0.10) !important;
+  border-radius: 10px !important;
 }
 
-.listItem:hover {
-  background:
-    linear-gradient(
-      180deg,
-      rgba(30, 8, 14, 0.72),
-      rgba(6, 1, 3, 0.82)
-    ) !important;
-
-  border-color: rgba(224, 0, 42, 0.30) !important;
-
-  box-shadow:
-    0 10px 24px rgba(0, 0, 0, 0.44),
-    0 0 18px rgba(224, 0, 42, 0.18) !important;
+.listItem:hover,
+.listItem:focus-within {
+  background-color: rgba(30, 8, 14, 0.54) !important;
+  border-color: rgba(224, 0, 42, 0.24) !important;
 }
 
-/* Episode thumbnails */
 .listItemImage,
 .listItemImageButton,
 .chapterThumb {
-  border-radius: 12px !important;
-  overflow: hidden;
-
-  box-shadow:
-    0 8px 18px rgba(0, 0, 0, 0.48) !important;
-}
-
-/* Episode title */
-.listItemBodyText {
-  color: var(--sc-text) !important;
-  font-weight: 700 !important;
-}
-
-/* Episode secondary text */
-.listItemBodyText-secondary {
-  color: var(--sc-muted) !important;
+  border-radius: 9px !important;
 }
 
 /* =========================================================
-   STITCHCORE MEDIA CSS
-   Module 22: Video Player Polish
-   Keep this light so the player does not break.
+   Module 20: Detail Pages
+   Preserve Jellyfin's own layout and artwork positioning.
    ========================================================= */
 
-/* Player controls background */
-.videoOsdBottom,
-.nowPlayingBar,
+.detailPageWrapperContainer {
+  color: var(--sc-text) !important;
+}
+
+.detailRibbon {
+  background-color: rgba(8, 2, 5, 0.74) !important;
+}
+
+.detailButton {
+  color: var(--sc-text) !important;
+}
+
+.detailButton:hover {
+  color: #ff657a !important;
+}
+
+/* =========================================================
+   Module 21: Video / Now Playing
+   ========================================================= */
+
+.videoOsdBottom {
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.82), rgba(0, 0, 0, 0)) !important;
+}
+
+.skinHeader-withBackground.osdHeader,
 .osdHeader {
-  background:
-    linear-gradient(
-      180deg,
-      rgba(0, 0, 0, 0.00),
-      rgba(0, 0, 0, 0.72)
-    ) !important;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.78), rgba(0, 0, 0, 0)) !important;
+  border-bottom-color: transparent !important;
+  box-shadow: none !important;
 }
 
-/* Player buttons */
-.videoOsdBottom .emby-button,
-.osdHeader .emby-button,
-.nowPlayingBar .emby-button,
+.nowPlayingBar {
+  background-color: rgba(8, 2, 5, 0.96) !important;
+  border-top: 1px solid rgba(176, 0, 31, 0.20) !important;
+}
+
 .videoOsdBottom .paper-icon-button-light,
-.osdHeader .paper-icon-button-light {
+.osdHeader .paper-icon-button-light,
+.nowPlayingBar .paper-icon-button-light {
   color: #f6e9eb !important;
-
-  background: rgba(0, 0, 0, 0.28) !important;
-  border: 1px solid rgba(176, 0, 31, 0.18) !important;
-  border-radius: 999px !important;
-
-  box-shadow:
-    0 6px 18px rgba(0, 0, 0, 0.38) !important;
+  background-color: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
 }
 
-.videoOsdBottom .emby-button:hover,
-.osdHeader .emby-button:hover,
 .videoOsdBottom .paper-icon-button-light:hover,
-.osdHeader .paper-icon-button-light:hover {
-  background: rgba(176, 0, 31, 0.30) !important;
-  border-color: rgba(224, 0, 42, 0.38) !important;
+.osdHeader .paper-icon-button-light:hover,
+.nowPlayingBar .paper-icon-button-light:hover {
+  color: #ff657a !important;
+  background-color: rgba(176, 0, 31, 0.18) !important;
 }
 
-/* Player progress / seek bar */
 .mdl-slider-background-lower,
-.sliderBubble,
 .nowPlayingBar .itemProgressBarForeground {
-  background:
-    linear-gradient(90deg, #780014, #e0002a) !important;
-
-  box-shadow:
-    0 0 10px rgba(224, 0, 42, 0.48) !important;
+  background: linear-gradient(90deg, #780014, var(--sc-red-bright)) !important;
 }
 
-/* Progress thumb */
 .mdl-slider::-webkit-slider-thumb,
 .mdl-slider::-moz-range-thumb {
   background: #f6e9eb !important;
-  box-shadow:
-    0 0 0 4px rgba(224, 0, 42, 0.22),
-    0 0 14px rgba(224, 0, 42, 0.55) !important;
+  box-shadow: 0 0 0 3px rgba(224, 0, 42, 0.24) !important;
 }
 
-/* Menus opened inside player */
-.actionSheet,
-.dialog {
-  background:
-    linear-gradient(
-      145deg,
-      rgba(13, 4, 8, 0.98),
-      rgba(0, 0, 0, 0.98)
-    ) !important;
-
+.sliderBubble {
+  color: var(--sc-text) !important;
+  background: rgba(8, 2, 5, 0.96) !important;
   border: 1px solid rgba(176, 0, 31, 0.28) !important;
 }
 
+/* Intro Skipper uses its own scoped classes. Theme only its palette. */
+.skip-button {
+  --skip-btn-bg: rgba(8, 2, 5, 0.88);
+  --skip-btn-bg-hover: #f6e9eb;
+  --skip-btn-border-color: rgba(255, 101, 122, 0.72);
+  --skip-btn-text-color: #f6e9eb;
+  --skip-btn-text-color-hover: #050206;
+  --skip-btn-progress-color: rgba(224, 0, 42, 0.86);
+}
 
 /* =========================================================
-   STITCHCORE MEDIA CSS
-   Module 90: TV Layout / Couch Mode
+   Module 90: TV Layout
+   Keep Jellyfin's TV sizing/spacing intact; only increase focus visibility.
    ========================================================= */
 
-.layout-tv {
-  --sc-tv-card-radius: 22px;
-  --sc-tv-focus-scale: 1.06;
-}
-
-/* TV base readability */
-.layout-tv,
-.layout-tv body {
-  font-size: 1.06em !important;
-}
-
-/* TV header */
-.layout-tv .skinHeader {
-  min-height: 4.25rem !important;
-
-  background:
-    linear-gradient(
-      90deg,
-      rgba(3, 0, 2, 0.98),
-      rgba(18, 4, 9, 0.96),
-      rgba(3, 0, 2, 0.98)
-    ) !important;
-
-  border-bottom: 1px solid rgba(176, 0, 31, 0.30) !important;
-
-  box-shadow:
-    0 12px 34px rgba(0, 0, 0, 0.50),
-    0 0 26px rgba(120, 0, 25, 0.24) !important;
-}
-
-/* TV brand sizing */
-.layout-tv .pageTitleWithDefaultLogo::before {
-  font-size: 1.35rem !important;
-  letter-spacing: 0.16em !important;
-}
-
-.layout-tv .pageTitleWithDefaultLogo::after {
-  font-size: 0.78rem !important;
-}
-
-/* Bigger section titles for couch distance */
-.layout-tv .sectionTitle,
-.layout-tv .pageTitle,
-.layout-tv h1,
-.layout-tv h2 {
-  font-size: 1.35em !important;
-  letter-spacing: 0.035em !important;
-}
-
-/* TV cards */
-.layout-tv .cardBox {
-  border-radius: var(--sc-tv-card-radius) !important;
-
-  background:
-    linear-gradient(
-      180deg,
-      rgba(14, 4, 8, 0.78),
-      rgba(0, 0, 0, 0.88)
-    ) !important;
-
-  border: 1px solid rgba(176, 0, 31, 0.20) !important;
-
-  box-shadow:
-    0 18px 42px rgba(0, 0, 0, 0.68),
-    0 0 22px rgba(120, 0, 25, 0.18) !important;
-
-  transition:
-    transform 0.14s ease,
-    box-shadow 0.14s ease,
-    border-color 0.14s ease,
-    filter 0.14s ease !important;
-}
-
-/* TV focus is more important than hover */
-.layout-tv .cardBox:focus,
-.layout-tv .cardBox:hover,
-.layout-tv .card:focus .cardBox,
-.layout-tv .card:focus-within .cardBox,
-.layout-tv .card:has(:focus) .cardBox {
-  transform: scale(var(--sc-tv-focus-scale)) !important;
-
-  border-color: rgba(224, 0, 42, 0.64) !important;
-
-  box-shadow:
-    0 26px 58px rgba(0, 0, 0, 0.82),
-    0 0 38px rgba(224, 0, 42, 0.48) !important;
-
-  z-index: 5;
-}
-
-/* Poster rounding */
-.layout-tv .cardImage,
-.layout-tv .cardContent,
-.layout-tv .cardScalable {
-  border-radius: 20px !important;
-}
-
-/* TV card text */
-.layout-tv .cardText,
-.layout-tv .cardText-first,
-.layout-tv .listItemBodyText {
-  font-size: 1.08em !important;
-  font-weight: 750 !important;
-}
-
-.layout-tv .cardText-secondary,
-.layout-tv .listItemBodyText-secondary,
-.layout-tv .secondaryText {
-  font-size: 1em !important;
-  color: var(--sc-muted) !important;
-}
-
-/* TV sidebar */
-.layout-tv .mainDrawer {
-  background:
-    linear-gradient(
-      180deg,
-      rgba(8, 2, 5, 0.98),
-      rgba(0, 0, 0, 0.98)
-    ) !important;
-
-  border-right: 1px solid rgba(176, 0, 31, 0.26) !important;
-}
-
-.layout-tv .navMenuOption {
-  min-height: 3.1rem !important;
-  border-radius: 16px !important;
-  margin: 0.24rem 0.65rem !important;
+.layout-tv .card:focus .cardContent,
+.layout-tv .card:focus .cardImageContainer {
+  outline: 3px solid rgba(224, 0, 42, 0.82);
+  outline-offset: 3px;
 }
 
 .layout-tv .navMenuOption-selected {
-  background:
-    linear-gradient(
-      135deg,
-      rgba(120, 0, 22, 0.72),
-      rgba(176, 0, 31, 0.46)
-    ) !important;
-
-  box-shadow:
-    0 0 20px rgba(176, 0, 31, 0.36),
-    inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+  box-shadow: inset 4px 0 0 var(--sc-red-bright) !important;
 }
 
-/* TV buttons */
-.layout-tv .emby-button,
-.layout-tv .raised,
-.layout-tv .paper-icon-button-light {
-  min-height: 3rem !important;
-  border-radius: 16px !important;
-  font-size: 1.04em !important;
-}
-
-/* TV detail pages */
-.layout-tv .detailPageWrapperContainer {
-  background:
-    linear-gradient(
-      90deg,
-      rgba(0, 0, 0, 0.97) 0%,
-      rgba(12, 2, 6, 0.88) 38%,
-      rgba(45, 0, 12, 0.42) 72%,
-      rgba(0, 0, 0, 0.20) 100%
-    ) !important;
-}
-
-.layout-tv .backdropImage {
-  filter:
-    brightness(0.30)
-    contrast(1.12)
-    saturate(0.82) !important;
-}
-
-.layout-tv .overview,
-.layout-tv .detailOverview,
-.layout-tv .itemOverview {
-  font-size: 1.1em !important;
-  line-height: 1.72 !important;
-  max-width: 940px !important;
-}
-
-/* TV episode/list rows */
-.layout-tv .listItem,
-.layout-tv .paperList .listItem {
-  min-height: 5rem !important;
-  border-radius: 18px !important;
-  margin: 0.45rem 0 !important;
-}
-
-.layout-tv .listItem:hover,
-.layout-tv .listItem:focus,
-.layout-tv .listItem:focus-within {
-  border-color: rgba(224, 0, 42, 0.40) !important;
-
-  box-shadow:
-    0 14px 34px rgba(0, 0, 0, 0.58),
-    0 0 24px rgba(224, 0, 42, 0.28) !important;
-}
-
-/* TV progress bars */
-.layout-tv .itemProgressBar {
-  height: 5px !important;
-}
-
-/* TV player controls: light touch */
-.layout-tv .videoOsdBottom .emby-button,
-.layout-tv .osdHeader .emby-button,
-.layout-tv .nowPlayingBar .emby-button,
-.layout-tv .videoOsdBottom .paper-icon-button-light,
-.layout-tv .osdHeader .paper-icon-button-light {
-  min-height: 3.2rem !important;
-  min-width: 3.2rem !important;
-  border-radius: 999px !important;
-
-  background: rgba(0, 0, 0, 0.34) !important;
-  border: 1px solid rgba(176, 0, 31, 0.22) !important;
-}
-
-/* TV player progress */
-.layout-tv .mdl-slider-background-lower,
-.layout-tv .nowPlayingBar .itemProgressBarForeground {
-  background:
-    linear-gradient(90deg, #780014, var(--sc-red-bright)) !important;
-
-  box-shadow:
-    0 0 12px rgba(224, 0, 42, 0.52) !important;
+.layout-tv .paper-icon-button-light:focus,
+.layout-tv .raised:focus {
+  outline: 2px solid rgba(224, 0, 42, 0.72);
+  outline-offset: 2px;
 }
