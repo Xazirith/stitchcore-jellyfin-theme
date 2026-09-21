@@ -552,234 +552,288 @@ body,
 
 /* =========================================================
    Module 12: Sidebar / Drawer
+   STITCHCORE — BLACK / RED
    ========================================================= */
 
 .mainDrawer {
   background:
-    radial-gradient(
-      circle at 18% 0%,
-      rgba(176, 0, 31, 0.10),
-      transparent 30%
-    ),
     linear-gradient(
       180deg,
-      rgba(10, 3, 6, 0.985),
-      rgba(2, 0, 1, 0.99)
+      #080000 0%,
+      #030000 35%,
+      #000000 100%
     ) !important;
 
-  border-right: 1px solid rgba(176, 0, 31, 0.18) !important;
+  border-right:
+    1px solid rgba(160, 0, 0, 0.28) !important;
 
   box-shadow:
-    10px 0 30px rgba(0, 0, 0, 0.48),
-    0 0 24px rgba(120, 0, 25, 0.10) !important;
+    12px 0 35px rgba(0, 0, 0, 0.72),
+    5px 0 20px rgba(120, 0, 0, 0.12) !important;
 
   backdrop-filter: blur(16px);
 }
 
 
-/* =========================
-   Menu items
-   ========================= */
+/* =========================================================
+   MENU ITEMS
+   ========================================================= */
 
 .navMenuOption {
   position: relative;
 
-  margin: 0.12rem 0.55rem !important;
-  padding: 0.72rem 0.82rem !important;
+  margin:
+    0.10rem
+    0.55rem !important;
 
-  border-radius: 11px !important;
+  padding:
+    0.72rem
+    0.86rem !important;
 
-  color: rgba(246, 233, 235, 0.68) !important;
-  background: transparent !important;
+  border-radius:
+    8px !important;
 
-  font-weight: 550 !important;
+  color:
+    #aaa !important;
+
+  background:
+    transparent !important;
+
+  font-weight:
+    550 !important;
 
   transition:
-    background 140ms ease,
     color 140ms ease,
+    background-color 140ms ease,
+    border-color 140ms ease,
     box-shadow 140ms ease !important;
 }
 
 
-/* Icons */
+/* =========================================================
+   ICONS
+   ========================================================= */
 
 .navMenuOptionIcon {
-  width: 1.5em;
-  flex-shrink: 0;
+  width:
+    1.5em;
 
-  margin-right: 0.72rem !important;
+  flex-shrink:
+    0;
 
-  color: rgba(210, 94, 112, 0.72) !important;
+  margin-right:
+    0.72rem !important;
 
-  text-align: center;
+  color:
+    #750000 !important;
+
+  text-align:
+    center;
 
   transition:
     color 140ms ease,
-    transform 140ms ease;
+    text-shadow 140ms ease;
 }
 
 
 .navMenuOptionText {
-  color: inherit !important;
+  color:
+    inherit !important;
 
-  line-height: 1.25;
+  line-height:
+    1.25;
 
-  font-weight: inherit !important;
-  letter-spacing: 0.01em;
+  font-weight:
+    inherit !important;
+
+  letter-spacing:
+    0.01em;
 }
 
 
-/* =========================
-   Hover
-   ========================= */
+/* =========================================================
+   HOVER
+   ========================================================= */
 
 .navMenuOption:hover {
-  color: var(--sc-text) !important;
+  color:
+    #eee !important;
 
   background:
     linear-gradient(
       90deg,
-      rgba(176, 0, 31, 0.14),
-      rgba(176, 0, 31, 0.045)
-    ) !important;
-
-  box-shadow:
-    inset 0 0 0 1px rgba(176, 0, 31, 0.10) !important;
-}
-
-
-.navMenuOption:hover .navMenuOptionIcon {
-  color: #ff657a !important;
-
-  transform: translateX(1px);
-}
-
-
-/* =========================
-   Selected
-   ========================= */
-
-.navMenuOption-selected {
-  color: #fff5f7 !important;
-
-  background:
-    linear-gradient(
-      90deg,
-      rgba(160, 0, 29, 0.30),
-      rgba(80, 0, 18, 0.11) 72%,
+      rgba(110, 0, 0, 0.22),
+      rgba(45, 0, 0, 0.10),
       transparent
     ) !important;
 
   box-shadow:
-    inset 0 0 0 1px rgba(224, 0, 42, 0.12),
-    0 5px 18px rgba(0, 0, 0, 0.18) !important;
-
-  font-weight: 700 !important;
+    inset 0 0 0 1px rgba(150, 0, 0, 0.15) !important;
 }
 
 
-/* Red active rail */
+.navMenuOption:hover .navMenuOptionIcon {
+  color:
+    #b00000 !important;
 
-.navMenuOption-selected::before {
-  content: "";
+  text-shadow:
+    0 0 8px rgba(160, 0, 0, 0.50);
+}
 
-  position: absolute;
 
-  left: 0;
-  top: 19%;
-  bottom: 19%;
+/* =========================================================
+   SELECTED ITEM
+   ========================================================= */
 
-  width: 3px;
-
-  border-radius: 999px;
+.navMenuOption-selected {
+  color:
+    #fff !important;
 
   background:
     linear-gradient(
-      180deg,
-      #ff4965,
-      var(--sc-red-bright),
-      var(--sc-red)
-    );
+      90deg,
+      rgba(100, 0, 0, 0.32),
+      rgba(25, 0, 0, 0.15),
+      transparent 85%
+    ) !important;
 
   box-shadow:
-    0 0 10px rgba(224, 0, 42, 0.68);
+    inset 0 0 0 1px rgba(175, 0, 0, 0.18),
+    0 4px 14px rgba(0, 0, 0, 0.35) !important;
+
+  font-weight:
+    700 !important;
+}
+
+
+/* Hard red active rail */
+
+.navMenuOption-selected::before {
+  content:
+    "";
+
+  position:
+    absolute;
+
+  left:
+    0;
+
+  top:
+    17%;
+
+  bottom:
+    17%;
+
+  width:
+    3px;
+
+  border-radius:
+    2px;
+
+  background:
+    #c00000;
+
+  box-shadow:
+    0 0 6px rgba(190, 0, 0, 0.75),
+    0 0 12px rgba(130, 0, 0, 0.35);
 }
 
 
 .navMenuOption-selected .navMenuOptionIcon {
-  color: #ff4965 !important;
+  color:
+    #c00000 !important;
 
   text-shadow:
-    0 0 10px rgba(224, 0, 42, 0.38);
+    0 0 8px rgba(180, 0, 0, 0.55);
 }
 
 
-/* =========================
-   Section headings
-   ========================= */
+/* =========================================================
+   SECTION LABELS
+   ========================================================= */
 
 .sidebarHeader {
-  margin: 1rem 0.75rem 0.35rem !important;
-  padding: 0 0.45rem !important;
+  margin:
+    1rem
+    0.75rem
+    0.35rem !important;
 
-  color: rgba(185, 154, 161, 0.58) !important;
+  padding:
+    0
+    0.45rem !important;
 
-  font-size: 0.68rem !important;
-  font-weight: 800 !important;
+  color:
+    #666 !important;
 
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  font-size:
+    0.67rem !important;
+
+  font-weight:
+    800 !important;
+
+  letter-spacing:
+    0.15em;
+
+  text-transform:
+    uppercase;
 }
 
 
-/* =========================
-   Focus / TV navigation
-   ========================= */
+/* =========================================================
+   FOCUS
+   ========================================================= */
 
 .navMenuOption:focus,
 .layout-tv .navMenuOption:focus {
-  color: var(--sc-text) !important;
+  color:
+    #fff !important;
 
   background:
-    rgba(176, 0, 31, 0.14) !important;
+    rgba(85, 0, 0, 0.24) !important;
 
   outline:
-    1px solid rgba(224, 0, 42, 0.42);
+    1px solid rgba(165, 0, 0, 0.42);
 
-  outline-offset: -1px;
+  outline-offset:
+    -1px;
 }
 
 
-/* =========================
-   Drawer scrollbar
-   ========================= */
+/* =========================================================
+   SCROLLBAR
+   ========================================================= */
 
 .mainDrawer-scrollContainer {
   scrollbar-color:
-    rgba(176, 0, 31, 0.38)
-    transparent;
+    #680000
+    #000;
 }
 
 
 .mainDrawer-scrollContainer::-webkit-scrollbar {
-  width: 5px;
+  width:
+    5px;
 }
 
 
 .mainDrawer-scrollContainer::-webkit-scrollbar-track {
-  background: transparent;
+  background:
+    #000;
 }
 
 
 .mainDrawer-scrollContainer::-webkit-scrollbar-thumb {
-  background: rgba(176, 0, 31, 0.34);
+  background:
+    #680000;
 
-  border-radius: 999px;
+  border-radius:
+    2px;
 }
 
 
 .mainDrawer-scrollContainer::-webkit-scrollbar-thumb:hover {
-  background: rgba(224, 0, 42, 0.54);
+  background:
+    #980000;
 }
 
 /* =========================================================
