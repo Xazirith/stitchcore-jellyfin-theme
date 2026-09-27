@@ -1,932 +1,185 @@
 /*
- * StitchCore Media Theme
- * Target: Jellyfin Web 12.1
- * Source repo: https://github.com/Xazirith/stitchcore-jellyfin-theme
+ * StitchCore Media — Jellyfin 12.1 Dashboard Relayout
+ * Purpose:
+ * - full-theme rebuild, not just recolor
+ * - sleek charcoal / red dashboard feel
+ * - cleaner shell, tighter header, stronger sidebar
+ * - relayout home/library cards to feel more like a modern streaming dashboard
+ * - medium-lightweight: no expensive blur, no heavy glow, no image animations
+ *
+ * Notes:
+ * - Built for Jellyfin Web 12.1 / modern UI, while still styling legacy surfaces
+ * - Uses cautious layout overrides to avoid wrecking playback/detail pages
  */
-@import url("https://cdn.jsdelivr.net/gh/intro-skipper/intro-skipper-css@main/skip-button.css");
-:root {
-  /* =========================================================
-     STITCHCORE CORE PALETTE
-     BLACK / TRUE RED / NEUTRAL WHITE
-     ========================================================= */
 
-  --sc-bg: #000000;
-  --sc-bg-deep: #000000;
+/* =========================================================
+   01. TOKENS
+   ========================================================= */
 
-  --sc-panel: rgba(8, 8, 8, 0.96);
-  --sc-panel-soft: rgba(12, 12, 12, 0.78);
+:root,
+[data-theme] {
+  --sc-bg: #0b0c0f;
+  --sc-bg-deep: #08090b;
+  --sc-bg-soft: #101216;
 
-  --sc-red: #8b0000;
-  --sc-red-bright: #d00000;
-  --sc-red-soft: rgba(160, 0, 0, 0.38);
-  --sc-red-faint: rgba(130, 0, 0, 0.16);
+  --sc-surface: #14171b;
+  --sc-surface-2: #181c21;
+  --sc-surface-3: #1f242b;
+  --sc-surface-4: #262c34;
 
-  --sc-text: #f2f2f2;
-  --sc-muted: #9a9a9a;
-  --sc-dim: rgba(235, 235, 235, 0.58);
+  --sc-line: rgba(255, 255, 255, 0.06);
+  --sc-line-strong: rgba(255, 255, 255, 0.10);
 
-  --sc-radius-lg: 22px;
-  --sc-radius-md: 14px;
-  --sc-radius-sm: 10px;
+  --sc-red: #c92238;
+  --sc-red-bright: #e62d46;
+  --sc-red-dark: #8f1727;
+  --sc-red-soft: rgba(201, 34, 56, 0.08);
+  --sc-red-soft-2: rgba(201, 34, 56, 0.14);
+  --sc-red-soft-3: rgba(201, 34, 56, 0.22);
 
-  /* Jellyfin 12.x palette */
+  --sc-text: #f3f5f7;
+  --sc-text-soft: #c7ccd2;
+  --sc-muted: #969ea7;
+  --sc-dim: #737c86;
 
-  --jf-palette-primary-main: #c00000;
-  --jf-palette-primary-mainChannel: 192 0 0;
+  --sc-radius-sm: 8px;
+  --sc-radius-md: 10px;
+  --sc-radius-lg: 14px;
+  --sc-radius-xl: 18px;
 
-  --jf-palette-primary-dark: #750000;
+  --sc-shadow-low: 0 4px 14px rgba(0, 0, 0, 0.18);
+  --sc-shadow-mid: 0 8px 24px rgba(0, 0, 0, 0.28);
+  --sc-shadow-card: 0 8px 22px rgba(0, 0, 0, 0.20);
 
-  --jf-palette-primary-light: #e00000;
+  --sc-sidebar-width: 255px;
+  --sc-content-max: 1700px;
+  --sc-page-pad: 28px;
+  --sc-gap: 16px;
 
+  /* Jellyfin / MUI palette variables */
+  --jf-palette-common-black: #000000;
+  --jf-palette-common-white: #ffffff;
+
+  --jf-palette-primary-main: #c92238;
+  --jf-palette-primary-mainChannel: 201 34 56;
+  --jf-palette-primary-dark: #8f1727;
+  --jf-palette-primary-light: #e62d46;
   --jf-palette-primary-contrastText: #ffffff;
 
-  --jf-palette-secondary-main: #a00000;
-  --jf-palette-secondary-mainChannel: 160 0 0;
-
+  --jf-palette-secondary-main: #c92238;
+  --jf-palette-secondary-mainChannel: 201 34 56;
+  --jf-palette-secondary-dark: #8f1727;
+  --jf-palette-secondary-light: #e62d46;
   --jf-palette-secondary-contrastText: #ffffff;
 
-  --jf-palette-background-default: #000000;
-  --jf-palette-background-defaultChannel: 0 0 0;
-
-  --jf-palette-background-paper: #080808;
-  --jf-palette-background-paperChannel: 8 8 8;
-
-  --jf-palette-text-primary: #f2f2f2;
-  --jf-palette-text-secondary: #9a9a9a;
-
-  --jf-palette-divider: rgba(150, 0, 0, 0.24);
-
-  --jf-palette-AppBar-defaultBg: rgba(0, 0, 0, 0.96);
-  --jf-palette-AppBar-transparentBg: rgba(0, 0, 0, 0.84);
-
-  --jf-palette-AppBar-gradient:
-    linear-gradient(
-      90deg,
-      #000000,
-      #100000,
-      #000000
-    );
-
-  --jf-palette-Button-inheritContainedBg: #111111;
-  --jf-palette-Button-inheritContainedHoverBg: #5c0000;
-
-  --jf-card-borderRadius: 16px;
-
-  --sc-shadow-panel:
-    0 20px 48px rgba(0, 0, 0, 0.72),
-    0 0 28px rgba(100, 0, 0, 0.28),
-    inset 0 1px 0 rgba(255, 255, 255, 0.035);
-
-  /* Intro Skipper */
-
-  --skip-hide-duration: 8s;
-
-  --headerColor: rgba(5, 5, 5, 0.94);
-
-  --textColor: #f2f2f2;
-
-  --accentColor: rgba(190, 0, 0, 0.92);
-
-  --darkerGradientPoint: #000000;
-
-  --shadow:
-    0 6px 18px rgba(0, 0, 0, 0.42);
-
-  --borderWidthDouble: 0.10em;
-
-  --largerRadius: 0.9em;
-
-  --highlightOutlineColor: #c00000;
-}
-
-
-/* =========================================================
-   Module 01: Login Page Reset
-   This removes Jellyfin banner/logo only on login.
-   ========================================================= */
-
-#loginPage .skinHeader,
-.loginPage .skinHeader,
-#loginPage .mainDrawer,
-.loginPage .mainDrawer,
-#loginPage .pageTitleWithDefaultLogo,
-.loginPage .pageTitleWithDefaultLogo,
-#loginPage .pageTitle,
-.loginPage .pageTitle,
-#loginPage h1,
-.loginPage h1,
-#loginPage img[src*="jellyfin"],
-.loginPage img[src*="jellyfin"],
-#loginPage .logoIcon,
-.loginPage .logoIcon {
-  display: none !important;
-}
-
-
-/* =========================================================
-   Module 02: Login Shell
-   ========================================================= */
-
-#loginPage,
-.loginPage {
-  min-height: 100vh !important;
-  color: var(--sc-text) !important;
-
-  background:
-    radial-gradient(circle at 18% 12%, rgba(176, 0, 31, 0.20), transparent 30%),
-    radial-gradient(circle at 84% 86%, rgba(90, 0, 22, 0.32), transparent 38%),
-    linear-gradient(145deg, #070305 0%, #030102 52%, #000000 100%) !important;
-}
-
-/* Keep Jellyfin backdrop art dark and not busy */
-#loginPage .backgroundContainer,
-.loginPage .backgroundContainer,
-#loginPage .backgroundContainer.withBackdrop,
-.loginPage .backgroundContainer.withBackdrop {
-  filter: brightness(0.18) contrast(1.08) saturate(0.68) !important;
-}
-
-/* Main login layout */
-#loginPage .readOnlyContent,
-.loginPage .readOnlyContent {
-  max-width: 440px !important;
-  margin: 0 auto !important;
-  padding: 7vh 1rem 0 !important;
-}
-
-
-/* =========================================================
-   Module 03: StitchCore Brand
-   ========================================================= */
-
-#loginPage .readOnlyContent::before,
-.loginPage .readOnlyContent::before {
-  content: "STITCHCORE\A MEDIA";
-  white-space: pre;
-  display: block;
-
-  margin: 0 0 1.15rem;
-
-  color: var(--sc-text);
-  text-align: center;
-  font-size: 1.9rem;
-  line-height: 1.08;
-  font-weight: 900;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-
-  text-shadow:
-    0 0 12px rgba(224, 0, 42, 0.58),
-    0 2px 3px rgba(0, 0, 0, 0.95);
-}
-
-
-/* =========================================================
-   Module 04: Login Card
-   ========================================================= */
-
-#loginPage .manualLoginForm,
-.loginPage .manualLoginForm {
-  position: relative;
-
-  max-width: 440px !important;
-  margin: 0 auto !important;
-  padding: 1.45rem 1.35rem 1.3rem !important;
-
-  border-radius: var(--sc-radius-lg) !important;
-  border: 1px solid var(--sc-red-soft) !important;
-
-  background:
-    linear-gradient(
-      180deg,
-      rgba(16, 5, 9, 0.94),
-      rgba(4, 1, 3, 0.97)
-    ) !important;
-
-  box-shadow: var(--sc-shadow-panel) !important;
-  backdrop-filter: blur(18px);
-
-  overflow: hidden;
-}
-
-/* Small internal label */
-#loginPage .manualLoginForm::before,
-.loginPage .manualLoginForm::before {
-  content: "PRIVATE ACCESS";
-  display: block;
-
-  margin: 0 0 1rem;
-  padding-bottom: 0.75rem;
-
-  color: var(--sc-muted);
-  font-size: 0.68rem;
-  font-weight: 800;
-  letter-spacing: 0.24em;
-  text-align: center;
-  text-transform: uppercase;
-
-  border-bottom: 1px solid rgba(176, 0, 31, 0.22);
-}
-
-/* Thin red top glow */
-#loginPage .manualLoginForm::after,
-.loginPage .manualLoginForm::after {
-  content: "";
-  position: absolute;
-
-  left: 18px;
-  right: 18px;
-  top: 0;
-
-  height: 1px;
-
-  background:
-    linear-gradient(
-      90deg,
-      transparent,
-      rgba(224, 0, 42, 0.72),
-      transparent
-    );
-
-  pointer-events: none;
-}
-
-
-/* =========================================================
-   Module 05: Login Form Fields
-   ========================================================= */
-
-#loginPage label,
-.loginPage label,
-#loginPage .inputLabel,
-.loginPage .inputLabel,
-#loginPage .fieldDescription,
-.loginPage .fieldDescription {
-  color: var(--sc-muted) !important;
-  font-size: 0.76rem !important;
-  font-weight: 650 !important;
-  letter-spacing: 0.035em !important;
-  text-transform: none !important;
-  text-shadow: none !important;
-}
-
-#loginPage .emby-input,
-.loginPage .emby-input,
-#loginPage input,
-.loginPage input {
-  height: 44px !important;
-
-  color: var(--sc-text) !important;
-  background: rgba(0, 0, 0, 0.42) !important;
-
-  border: 1px solid rgba(176, 0, 31, 0.28) !important;
-  border-radius: var(--sc-radius-md) !important;
-
-  box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.025),
-    inset 0 0 12px rgba(0, 0, 0, 0.58) !important;
-
-  text-shadow: none !important;
-}
-
-#loginPage .emby-input:focus,
-.loginPage .emby-input:focus,
-#loginPage input:focus,
-.loginPage input:focus {
-  background: rgba(0, 0, 0, 0.56) !important;
-  border-color: rgba(224, 0, 42, 0.78) !important;
-
-  box-shadow:
-    0 0 0 3px rgba(224, 0, 42, 0.12),
-    0 0 16px rgba(224, 0, 42, 0.24),
-    inset 0 0 12px rgba(0, 0, 0, 0.64) !important;
-}
-
-
-/* =========================================================
-   Module 06: Login Buttons
-   Important: only the real submit button gets the red style.
-   ========================================================= */
-
-/* Remove ugly global button look from login */
-#loginPage .emby-button,
-.loginPage .emby-button,
-#loginPage .raised,
-.loginPage .raised,
-#loginPage .paper-icon-button-light,
-.loginPage .paper-icon-button-light {
-  text-shadow: none !important;
-  box-shadow: none !important;
-}
-
-/* Primary sign-in button */
-#loginPage .button-submit,
-.loginPage .button-submit,
-#loginPage .raised.button-submit,
-.loginPage .raised.button-submit,
-#loginPage button[type="submit"],
-.loginPage button[type="submit"] {
-  height: 44px !important;
-
-  color: #fff4f6 !important;
-  background:
-    linear-gradient(135deg, #780014 0%, #a0001d 58%, #d80029 100%) !important;
-
-  border: 1px solid rgba(255, 95, 120, 0.32) !important;
-  border-radius: var(--sc-radius-md) !important;
-
-  font-weight: 800 !important;
-  letter-spacing: 0.08em !important;
-  text-transform: uppercase !important;
-
-  box-shadow:
-    0 10px 22px rgba(0, 0, 0, 0.50),
-    0 0 16px rgba(176, 0, 31, 0.34),
-    inset 0 1px 0 rgba(255, 255, 255, 0.10) !important;
-}
-
-#loginPage .button-submit:hover,
-.loginPage .button-submit:hover,
-#loginPage button[type="submit"]:hover,
-.loginPage button[type="submit"]:hover {
-  filter: brightness(1.08);
-  transform: translateY(-1px);
-
-  box-shadow:
-    0 12px 26px rgba(0, 0, 0, 0.56),
-    0 0 22px rgba(224, 0, 42, 0.46),
-    inset 0 1px 0 rgba(255, 255, 255, 0.14) !important;
-}
-
-/* Secondary login buttons/links */
-#loginPage .emby-button:not(.button-submit),
-.loginPage .emby-button:not(.button-submit),
-#loginPage .raised:not(.button-submit),
-.loginPage .raised:not(.button-submit) {
-  color: #ff657a !important;
-  background: transparent !important;
-  border: 0 !important;
-  box-shadow: none !important;
-  font-weight: 600 !important;
-}
-
-#loginPage a,
-.loginPage a {
-  color: #ff657a !important;
-  text-shadow: none !important;
-}
-
-
-/* =========================================================
-   Module 07: Login Help Panel
-   ========================================================= */
-
-#loginPage .readOnlyContent::after,
-.loginPage .readOnlyContent::after {
-  content:
-    "Need access? Request a StitchCore Media account from the server owner.\A"
-    "Forgot password? Contact the server owner for account recovery.\A"
-    "Quick Connect: open Quick Connect on your device, then approve the code from a logged-in session.";
-
-  white-space: pre-line;
-  display: block;
-
-  max-width: 440px;
-  margin: 0.85rem auto 0;
-  padding: 0.85rem 0.95rem;
-
-  color: var(--sc-dim);
-  font-size: 0.76rem;
-  line-height: 1.45;
-  text-align: center;
-
-  border-radius: var(--sc-radius-md);
-  border: 1px solid var(--sc-red-faint);
-  background: rgba(0, 0, 0, 0.34);
-
-  box-shadow:
-    0 10px 24px rgba(0, 0, 0, 0.34),
-    inset 0 1px 0 rgba(255, 255, 255, 0.03);
-}
-
-
-/* =========================================================
-   Module 08: Login Bottom Disclaimer
-   ========================================================= */
-
-#loginPage::after,
-.loginPage::after {
-  content:
-    "Private StitchCore Media system. Authorized users only. Activity may be logged for security, troubleshooting, and account administration.";
-
-  position: fixed;
-  left: 50%;
-  bottom: 1rem;
-  transform: translateX(-50%);
-
-  width: min(92vw, 700px);
-  padding: 0.6rem 0.85rem;
-
-  color: rgba(246, 233, 235, 0.52);
-  font-size: 0.70rem;
-  line-height: 1.32;
-  text-align: center;
-
-  border: 1px solid rgba(176, 0, 31, 0.14);
-  border-radius: 999px;
-
-  background: rgba(0, 0, 0, 0.42);
-  backdrop-filter: blur(12px);
-}
-
-
-/* =========================================================
-   Module 09: Login Mobile
-   ========================================================= */
-
-@media (max-width: 600px) {
-  #loginPage .readOnlyContent,
-  .loginPage .readOnlyContent {
-    max-width: 100% !important;
-    padding-top: 1.5rem !important;
-  }
-
-  #loginPage .readOnlyContent::before,
-  .loginPage .readOnlyContent::before {
-    font-size: 1.48rem;
-    letter-spacing: 0.13em;
-  }
-
-  #loginPage .manualLoginForm,
-  .loginPage .manualLoginForm {
-    margin: 0 0.8rem !important;
-    padding: 1.25rem 1rem 1.15rem !important;
-    border-radius: 18px !important;
-  }
-
-  #loginPage .readOnlyContent::after,
-  .loginPage .readOnlyContent::after {
-    margin: 0.8rem 0.8rem 0;
-    font-size: 0.72rem;
-  }
-
-  #loginPage::after,
-  .loginPage::after {
-    position: static;
-    transform: none;
-    width: auto;
-    margin: 0.85rem 0.8rem;
-    border-radius: 12px;
-    font-size: 0.66rem;
-  }
+  --jf-palette-background-default: #0b0c0f;
+  --jf-palette-background-defaultChannel: 11 12 15;
+  --jf-palette-background-paper: #14171b;
+  --jf-palette-background-paperChannel: 20 23 27;
+
+  --jf-palette-text-primary: #f3f5f7;
+  --jf-palette-text-secondary: #969ea7;
+  --jf-palette-text-disabled: #616973;
+
+  --jf-palette-action-active: rgba(243, 245, 247, 0.80);
+  --jf-palette-action-hover: rgba(255, 255, 255, 0.04);
+  --jf-palette-action-selected: rgba(201, 34, 56, 0.14);
+  --jf-palette-action-focus: rgba(201, 34, 56, 0.18);
+  --jf-palette-action-disabled: rgba(255, 255, 255, 0.24);
+  --jf-palette-action-disabledBackground: rgba(255, 255, 255, 0.05);
+
+  --jf-palette-divider: rgba(255, 255, 255, 0.065);
+
+  --jf-palette-AppBar-defaultBg: #111419;
+  --jf-palette-AppBar-transparentBg: rgba(17, 20, 25, 0.95);
+  --jf-palette-AppBar-gradient: none;
+
+  --jf-palette-Button-inheritContainedBg: #1f242b;
+  --jf-palette-Button-inheritContainedHoverBg: #262c34;
+
+  --jf-palette-SnackbarContent-bg: #181c21;
+  --jf-palette-SnackbarContent-color: #f3f5f7;
+
+  --jf-card-borderRadius: 12px;
 }
 
 /* =========================================================
-   STITCHCORE MEDIA CSS
-   Module 10: Jellyfin 12.1 App Skin
-   IMPORTANT: visuals only. Jellyfin owns layout/spacing.
+   02. BASE / PERFORMANCE
    ========================================================= */
 
-/* Base surfaces */
 html,
-body,
-.backgroundContainer {
+body {
   color: var(--sc-text) !important;
+  background: var(--sc-bg) !important;
+}
+
+body {
+  text-rendering: optimizeLegibility;
+}
+
+.backgroundContainer {
   background-color: var(--sc-bg) !important;
 }
 
 .backgroundContainer:not(.withBackdrop) {
   background-image:
-    radial-gradient(circle at 12% 0%, rgba(176, 0, 31, 0.12), transparent 31%),
-    radial-gradient(circle at 94% 92%, rgba(80, 0, 18, 0.18), transparent 38%),
-    linear-gradient(145deg, #070305 0%, #030102 52%, #000 100%) !important;
-}
-
-/* Let Jellyfin keep backdrop placement and sizing. Only grade the image. */
-.backdropImage {
-  filter: brightness(0.38) saturate(0.84) contrast(1.06) !important;
+    radial-gradient(circle at 12% -8%, rgba(201, 34, 56, 0.05), transparent 24%),
+    radial-gradient(circle at 82% 10%, rgba(201, 34, 56, 0.04), transparent 20%),
+    linear-gradient(145deg, #0d1013 0%, #0b0c0f 52%, #090a0d 100%) !important;
 }
 
 .backgroundContainer.withBackdrop {
-  background-color: #050206 !important;
-}
-
-.libraryPage,
-.homePage,
-.page,
-.view,
-.mainAnimatedPage {
-  color: var(--sc-text) !important;
-}
-
-/* =========================================================
-   Module 11: Header / Brand
-   ========================================================= */
-
-.skinHeader,
-.skinHeader-withBackground {
-  background-color: rgba(3, 0, 2, 0.94) !important;
-  background-image:
-    linear-gradient(90deg, rgba(3, 0, 2, 0.96), rgba(16, 4, 8, 0.94), rgba(3, 0, 2, 0.96)) !important;
-  border-bottom: 1px solid rgba(176, 0, 31, 0.24) !important;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.38) !important;
-  backdrop-filter: blur(14px);
-}
-
-/* Replace only Jellyfin's default header logo artwork. Do not change its geometry. */
-.pageTitleWithDefaultLogo {
-  background-image: none !important;
-}
-
-.pageTitleWithDefaultLogo::before {
-  content: "STITCHCORE";
-  color: var(--sc-text);
-  font-weight: 900;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  text-shadow: 0 0 10px rgba(224, 0, 42, 0.46);
-}
-
-.pageTitleWithDefaultLogo::after {
-  content: " MEDIA";
-  color: var(--sc-muted);
-  font-size: 0.62em;
-  font-weight: 800;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-}
-
-.pageTitleWithDefaultLogo img,
-.skinHeader img[src*="jellyfin"] {
-  display: none !important;
-}
-
-/* Header icons: color only. No borders, padding, sizing, or box model changes. */
-.skinHeader .paper-icon-button-light,
-.skinHeader .emby-button {
-  color: var(--sc-text) !important;
-}
-
-.skinHeader .paper-icon-button-light:hover,
-.skinHeader .emby-button:hover {
-  color: #ff657a !important;
-  background-color: rgba(176, 0, 31, 0.13) !important;
-}
-
-/* =========================================================
-   Module 12: Sidebar / Drawer
-   STITCHCORE — RED / BLACK ONLY
-   ========================================================= */
-
-.mainDrawer {
-  --menu-black: #000000;
-  --menu-black-soft: #050000;
-  --menu-black-raised: #0b0000;
-
-  --menu-red-deep: #3d0000;
-  --menu-red-dark: #680000;
-  --menu-red: #980000;
-  --menu-red-strong: #c00000;
-  --menu-red-hot: #f00000;
-
-  background:
-    radial-gradient(
-      circle at 20% 8%,
-      rgba(150, 0, 0, 0.18),
-      transparent 34%
-    ),
-    linear-gradient(
-      180deg,
-      #0a0000 0%,
-      #040000 42%,
-      #000000 100%
-    ) !important;
-
-  border-right:
-    1px solid rgba(160, 0, 0, 0.30) !important;
-
-  box-shadow:
-    12px 0 34px rgba(0, 0, 0, 0.72),
-    4px 0 22px rgba(120, 0, 0, 0.16) !important;
-
-  backdrop-filter: blur(16px);
-}
-
-
-/* =========================================================
-   MENU ITEM
-   ========================================================= */
-
-.navMenuOption {
-  position: relative;
-
-  margin:
-    0.13rem
-    0.55rem !important;
-
-  padding:
-    0.76rem
-    0.9rem !important;
-
-  border:
-    1px solid transparent !important;
-
-  border-radius:
-    12px !important;
-
-  color:
-    var(--menu-red) !important;
-
-  background:
-    linear-gradient(
-      135deg,
-      rgba(18, 0, 0, 0.32),
-      rgba(0, 0, 0, 0.16)
-    ) !important;
-
-  font-weight:
-    650 !important;
-
-  transition:
-    color 140ms ease,
-    background 140ms ease,
-    border-color 140ms ease,
-    box-shadow 140ms ease !important;
-}
-
-
-/* =========================================================
-   ICON
-   ========================================================= */
-
-.navMenuOptionIcon {
-  flex-shrink: 0;
-
-  width:
-    1.55em;
-
-  margin-right:
-    0.78rem !important;
-
-  color:
-    var(--menu-red-dark) !important;
-
-  text-shadow:
-    0 0 8px rgba(120, 0, 0, 0.24);
-
-  transition:
-    color 140ms ease,
-    text-shadow 140ms ease;
-}
-
-
-.navMenuOptionText {
-  color:
-    inherit !important;
-
-  font-weight:
-    inherit !important;
-
-  line-height:
-    1.3;
-
-  letter-spacing:
-    0.012em;
-}
-
-
-/* =========================================================
-   HOVER
-   ========================================================= */
-
-.navMenuOption:hover {
-  color:
-    var(--menu-red-strong) !important;
-
-  background:
-    radial-gradient(
-      circle at 15% 50%,
-      rgba(150, 0, 0, 0.16),
-      transparent 55%
-    ),
-    linear-gradient(
-      135deg,
-      rgba(42, 0, 0, 0.78),
-      rgba(7, 0, 0, 0.92)
-    ) !important;
-
-  border-color:
-    rgba(165, 0, 0, 0.30) !important;
-
-  box-shadow:
-    0 8px 20px rgba(0, 0, 0, 0.40),
-    0 0 14px rgba(120, 0, 0, 0.14),
-    inset 0 1px 0 rgba(150, 0, 0, 0.12) !important;
-}
-
-
-.navMenuOption:hover .navMenuOptionIcon {
-  color:
-    var(--menu-red-strong) !important;
-
-  text-shadow:
-    0 0 10px rgba(190, 0, 0, 0.46);
-}
-
-
-/* =========================================================
-   ACTIVE / SELECTED
-   ========================================================= */
-
-.navMenuOption-selected {
-  color:
-    var(--menu-red-hot) !important;
-
-  background:
-    radial-gradient(
-      circle at 18% 50%,
-      rgba(200, 0, 0, 0.24),
-      transparent 52%
-    ),
-    linear-gradient(
-      135deg,
-      rgba(80, 0, 0, 0.82),
-      rgba(16, 0, 0, 0.96)
-    ) !important;
-
-  border-color:
-    rgba(210, 0, 0, 0.46) !important;
-
-  box-shadow:
-    0 9px 22px rgba(0, 0, 0, 0.46),
-    0 0 18px rgba(170, 0, 0, 0.22),
-    inset 0 0 18px rgba(120, 0, 0, 0.12),
-    inset 0 1px 0 rgba(220, 0, 0, 0.14) !important;
-
-  font-weight:
-    800 !important;
-}
-
-
-/* Active red spine */
-
-.navMenuOption-selected::before {
-  content: "";
-
-  position: absolute;
-
-  left:
-    0;
-
-  top:
-    17%;
-
-  bottom:
-    17%;
-
-  width:
-    3px;
-
-  border-radius:
-    0 4px 4px 0;
-
   background:
     linear-gradient(
       180deg,
-      var(--menu-red),
-      var(--menu-red-hot),
-      var(--menu-red)
-    );
-
-  box-shadow:
-    0 0 8px rgba(220, 0, 0, 0.72),
-    0 0 15px rgba(150, 0, 0, 0.42);
-}
-
-
-.navMenuOption-selected .navMenuOptionIcon {
-  color:
-    var(--menu-red-hot) !important;
-
-  text-shadow:
-    0 0 9px rgba(220, 0, 0, 0.58);
-}
-
-
-/* =========================================================
-   SECTION LABELS
-   ========================================================= */
-
-.sidebarHeader {
-  margin:
-    1rem
-    0.9rem
-    0.38rem !important;
-
-  padding:
-    0
-    0.35rem !important;
-
-  color:
-    var(--menu-red-dark) !important;
-
-  font-size:
-    0.67rem !important;
-
-  font-weight:
-    900 !important;
-
-  letter-spacing:
-    0.16em;
-
-  text-transform:
-    uppercase;
-
-  text-shadow:
-    0 0 8px rgba(100, 0, 0, 0.24);
-}
-
-
-/* =========================================================
-   FOCUS / TV
-   ========================================================= */
-
-.navMenuOption:focus,
-.layout-tv .navMenuOption:focus {
-  color:
-    var(--menu-red-hot) !important;
-
-  background:
-    linear-gradient(
-      135deg,
-      rgba(76, 0, 0, 0.86),
-      rgba(10, 0, 0, 0.96)
+      rgba(8, 10, 12, 0.20) 0%,
+      rgba(8, 10, 12, 0.48) 42%,
+      rgba(8, 10, 12, 0.88) 100%
     ) !important;
-
-  border-color:
-    rgba(210, 0, 0, 0.54) !important;
-
-  outline:
-    none !important;
-
-  box-shadow:
-    0 0 0 2px rgba(150, 0, 0, 0.16),
-    0 0 18px rgba(175, 0, 0, 0.24) !important;
 }
 
-
-/* =========================================================
-   SCROLLBAR
-   ========================================================= */
-
-.mainDrawer-scrollContainer {
-  scrollbar-color:
-    var(--menu-red-dark)
-    var(--menu-black);
+.backdropImage,
+.cardImage,
+.blurhash-canvas {
+  animation: none !important;
+  transform: none !important;
+  will-change: auto !important;
 }
 
-
-.mainDrawer-scrollContainer::-webkit-scrollbar {
-  width:
-    5px;
+.backdropImage {
+  filter: brightness(0.52) saturate(0.90) contrast(1.02) !important;
 }
 
-
-.mainDrawer-scrollContainer::-webkit-scrollbar-track {
-  background:
-    var(--menu-black);
+.cardImage,
+.blurhash-canvas {
+  filter: none !important;
 }
 
-
-.mainDrawer-scrollContainer::-webkit-scrollbar-thumb {
-  background:
-    linear-gradient(
-      180deg,
-      var(--menu-red-dark),
-      var(--menu-red)
-    );
-
-  border-radius:
-    999px;
-}
-
-
-.mainDrawer-scrollContainer::-webkit-scrollbar-thumb:hover {
-  background:
-    var(--menu-red-strong);
+@supports (content-visibility: auto) {
+  .verticalSection,
+  .itemsContainer {
+    content-visibility: auto;
+    contain-intrinsic-size: 1px 650px;
+  }
 }
 
 /* =========================================================
-   Module 13: Type
+   03. TYPOGRAPHY
    ========================================================= */
 
 .sectionTitle,
 .pageTitle,
 h1,
 h2,
-h3 {
+h3,
+h4 {
   color: var(--sc-text) !important;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.72);
+  text-shadow: none !important;
+}
+
+.sectionTitle {
+  font-weight: 620 !important;
+  letter-spacing: 0.01em !important;
 }
 
 .secondaryText,
@@ -936,183 +189,765 @@ h3 {
   color: var(--sc-muted) !important;
 }
 
+::selection {
+  color: #fff;
+  background: rgba(201, 34, 56, 0.70);
+}
+
 /* =========================================================
-   Module 14: Cards
-   Never alter card margin/padding/width/height/overflow/transform here.
+   04. APP BAR / HEADER
    ========================================================= */
 
+[class*="MuiAppBar-root"],
+.skinHeader,
+.skinHeader-withBackground {
+  color: var(--sc-text) !important;
+  background: #111419 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.14) !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+.skinHeader.semiTransparent {
+  background: rgba(17, 20, 25, 0.95) !important;
+}
+
+[class*="MuiAppBar-root"]::after,
+.skinHeader::after,
+.skinHeader-withBackground::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(201, 34, 56, 0.24),
+    rgba(201, 34, 56, 0.55),
+    rgba(201, 34, 56, 0.24),
+    transparent
+  );
+  pointer-events: none;
+}
+
+[class*="MuiToolbar-root"] {
+  color: inherit !important;
+  min-height: 60px !important;
+}
+
+.skinHeader .paper-icon-button-light,
+.skinHeader .emby-button,
+[class*="MuiIconButton-root"] {
+  color: var(--sc-text-soft) !important;
+}
+
+.skinHeader .paper-icon-button-light:hover,
+.skinHeader .emby-button:hover,
+[class*="MuiIconButton-root"]:hover {
+  color: var(--sc-text) !important;
+  background-color: rgba(201, 34, 56, 0.08) !important;
+}
+
+/* Optional brand replacement */
+.pageTitleWithDefaultLogo {
+  background-image: none !important;
+}
+
+.pageTitleWithDefaultLogo::before {
+  content: "STITCHCORE";
+  color: var(--sc-text);
+  font-weight: 820;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.pageTitleWithDefaultLogo::after {
+  content: " MEDIA";
+  color: var(--sc-red);
+  font-size: 0.62em;
+  font-weight: 780;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.pageTitleWithDefaultLogo img,
+.skinHeader img[src*="jellyfin"] {
+  display: none !important;
+}
+
+/* Search */
+.emby-input,
+.emby-select,
+.emby-textarea,
+[class*="MuiInputBase-root"] {
+  color: var(--sc-text) !important;
+  background: #111419 !important;
+  border-radius: 12px !important;
+}
+
+[class*="MuiOutlinedInput-notchedOutline"],
+.emby-input,
+.emby-select,
+.emby-textarea {
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+[class*="MuiOutlinedInput-root"]:hover [class*="MuiOutlinedInput-notchedOutline"],
+.emby-input:hover,
+.emby-select:hover,
+.emby-textarea:hover {
+  border-color: rgba(255, 255, 255, 0.14) !important;
+}
+
+[class*="MuiOutlinedInput-root"].Mui-focused [class*="MuiOutlinedInput-notchedOutline"],
+.emby-input:focus,
+.emby-select:focus,
+.emby-textarea:focus {
+  border-color: var(--sc-red) !important;
+  box-shadow: 0 0 0 2px rgba(201, 34, 56, 0.10) !important;
+}
+
+[class*="MuiInputLabel-root"],
+[class*="MuiFormLabel-root"],
+[class*="MuiFormHelperText-root"],
+.inputLabel,
+.fieldDescription {
+  color: var(--sc-muted) !important;
+}
+
+/* Tabs */
+[class*="MuiTab-root"] {
+  color: var(--sc-muted) !important;
+  transition: color 110ms ease, background-color 110ms ease !important;
+}
+
+[class*="MuiTab-root"]:hover {
+  color: var(--sc-text) !important;
+  background-color: rgba(201, 34, 56, 0.06) !important;
+}
+
+[class*="MuiTab-root"].Mui-selected,
+[class*="MuiTab-root"][aria-selected="true"] {
+  color: var(--sc-text) !important;
+}
+
+[class*="MuiTabs-indicator"] {
+  height: 2px !important;
+  background-color: var(--sc-red) !important;
+}
+
+/* =========================================================
+   05. SIDEBAR / DRAWER RELAYOUT
+   ========================================================= */
+
+[class*="MuiDrawer-paper"],
+.mainDrawer,
+.drawer-open {
+  color: var(--sc-text) !important;
+  background:
+    linear-gradient(180deg, #111419 0%, #101216 46%, #0b0c0f 100%) !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
+  box-shadow: 5px 0 16px rgba(0, 0, 0, 0.18) !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+.mainDrawer {
+  width: var(--sc-sidebar-width) !important;
+}
+
+.mainDrawer-scrollContainer,
+.mainDrawer .sidebarItems {
+  padding: 18px 14px 20px !important;
+}
+
+.sidebarHeader {
+  color: var(--sc-dim) !important;
+  font-size: 0.67rem !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* Brand spacing in drawer */
+.mainDrawer .pageTitle,
+.mainDrawer .drawerLogoContainer,
+.mainDrawer .sidebarBranding {
+  margin-bottom: 12px !important;
+}
+
+/* Nav entries */
+[class*="MuiListItemButton-root"],
+[class*="MuiMenuItem-root"],
+.navMenuOption {
+  position: relative;
+  color: var(--sc-muted) !important;
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  border-radius: 12px !important;
+  min-height: 46px !important;
+  margin-bottom: 4px !important;
+  transition:
+    color 110ms ease,
+    background-color 110ms ease,
+    border-color 110ms ease,
+    box-shadow 110ms ease !important;
+}
+
+[class*="MuiListItemButton-root"]:hover,
+[class*="MuiMenuItem-root"]:hover,
+.navMenuOption:hover {
+  color: var(--sc-text) !important;
+  background: rgba(255, 255, 255, 0.035) !important;
+  border-color: rgba(255, 255, 255, 0.03) !important;
+}
+
+[class*="MuiListItemButton-root"].Mui-selected,
+[class*="MuiMenuItem-root"].Mui-selected,
+[class*="MuiListItemButton-root"][aria-current="page"],
+.navMenuOption-selected {
+  color: var(--sc-text) !important;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(201, 34, 56, 0.14),
+      rgba(201, 34, 56, 0.05),
+      transparent
+    ) !important;
+  border-color: rgba(201, 34, 56, 0.10) !important;
+  box-shadow:
+    inset 3px 0 0 var(--sc-red),
+    0 0 0 1px rgba(201, 34, 56, 0.03) inset !important;
+  font-weight: 700 !important;
+}
+
+.navMenuOptionIcon {
+  color: var(--sc-dim) !important;
+}
+
+.navMenuOption:hover .navMenuOptionIcon {
+  color: var(--sc-text-soft) !important;
+}
+
+.navMenuOption-selected .navMenuOptionIcon {
+  color: var(--sc-red-bright) !important;
+}
+
+/* =========================================================
+   06. PAGE WIDTH / MAIN LAYOUT
+   ========================================================= */
+
+.libraryPage,
+.homePage,
+.page,
+.view,
+.mainAnimatedPage,
+.dashboardDocument {
+  color: var(--sc-text) !important;
+}
+
+/* Constrain content so it feels dashboard-like */
+.homePage .padded-left-page,
+.libraryPage .padded-left-page,
+.homePage .padded-inline-page,
+.libraryPage .padded-inline-page,
+.homePage .mainPageBody,
+.libraryPage .mainPageBody,
+.view .mainPageBody {
+  max-width: var(--sc-content-max) !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* Cleaner top spacing */
+.homePage .mainPageBody,
+.libraryPage .mainPageBody,
+.page .mainPageBody {
+  padding-top: 18px !important;
+}
+
+/* Tighter section rhythm */
+.verticalSection {
+  margin-bottom: 24px !important;
+}
+
+.sectionTitleContainer {
+  margin-bottom: 10px !important;
+}
+
+.emby-scroller {
+  padding-bottom: 2px !important;
+}
+
+/* =========================================================
+   07. DASHBOARD RELAYOUT — HOME / LIBRARY GROUPS
+   ========================================================= */
+
+/*
+ This section intentionally changes structure more than earlier themes.
+ It makes home/library groups feel like a dashboard:
+ - cleaner section containers
+ - tighter content rhythm
+ - a more structured tile grid feel
+*/
+
+/* group containers */
+.homePage .verticalSection,
+.libraryPage .verticalSection {
+  position: relative;
+  padding: 0 !important;
+  border-radius: 18px !important;
+}
+
+/* Add slightly more separation to important sections */
+.homePage .verticalSection > .sectionTitleContainer,
+.libraryPage .verticalSection > .sectionTitleContainer {
+  padding-left: 2px !important;
+  padding-right: 2px !important;
+}
+
+/* Items container spacing */
+.itemsContainer {
+  gap: var(--sc-gap) !important;
+}
+
+/*
+ Use a grid-like feel where possible.
+ We avoid forcing every scroller into display:grid because that can break some rows,
+ but we do tighten card sizing and spacing so the result reads more like a dashboard.
+*/
+.homePage .itemsContainer,
+.libraryPage .itemsContainer {
+  row-gap: 16px !important;
+  column-gap: 16px !important;
+}
+
+/* =========================================================
+   08. TILE / CARD RELAYOUT
+   ========================================================= */
+
+/* Generic shells */
+.card,
+.cardBox,
 .cardContent,
 .cardImageContainer,
-.cardBox:not(.visualCardBox) .cardPadder,
+.cardPadder,
 .blurhash-canvas {
-  border-radius: var(--jf-card-borderRadius, 16px) !important;
+  border-radius: var(--jf-card-borderRadius, 12px) !important;
 }
 
-/* Visual cards are cards, NOT dialogs. Keep the effect deliberately light. */
-.cardBox.visualCardBox {
-  background-color: rgba(10, 3, 6, 0.38) !important;
-  border: 1px solid rgba(176, 0, 31, 0.12) !important;
-  border-radius: var(--jf-card-borderRadius, 16px) !important;
-  box-shadow: 0 7px 20px rgba(0, 0, 0, 0.38) !important;
+/* Kill old theme chrome */
+.cardBox.visualCardBox,
+.cardBox:not(.visualCardBox) {
+  background: transparent !important;
+  box-shadow: none !important;
 }
 
-.cardBox:not(.visualCardBox) .cardScalable {
-  border-radius: var(--jf-card-borderRadius, 16px) !important;
-  box-shadow: 0 7px 20px rgba(0, 0, 0, 0.34) !important;
+/* Main card panel */
+.cardBox .cardScalable,
+.cardScalable {
+  position: relative;
+  overflow: hidden !important;
+  border-radius: 14px !important;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(22, 25, 30, 0.94) 0%,
+      rgba(15, 18, 22, 0.96) 100%
+    ) !important;
+  border: 1px solid rgba(255, 255, 255, 0.07) !important;
+  box-shadow: var(--sc-shadow-card) !important;
+  transition:
+    transform 120ms ease,
+    border-color 120ms ease,
+    box-shadow 120ms ease,
+    background-color 120ms ease !important;
 }
 
-.card.show-animation:focus > .cardBox,
-.card:focus .cardBox,
-.card:hover .cardBox {
-  filter: brightness(1.04);
+/* Sleek accent line top */
+.cardBox .cardScalable::before,
+.cardScalable::before {
+  content: "";
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  top: 0;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(201, 34, 56, 0.72),
+    transparent
+  );
+  opacity: 0.72;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Accent bar bottom */
+.cardBox .cardScalable::after,
+.cardScalable::after {
+  content: "";
+  position: absolute;
+  left: 18px;
+  bottom: 14px;
+  width: 40px;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #c92238 0%, #e62d46 100%);
+  opacity: 0.96;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.card:hover .cardScalable,
+.card:focus .cardScalable,
+.card:focus-within .cardScalable {
+  transform: translateY(-2px) !important;
+  border-color: rgba(201, 34, 56, 0.16) !important;
+  box-shadow:
+    0 10px 24px rgba(0, 0, 0, 0.22),
+    0 0 0 1px rgba(201, 34, 56, 0.05) inset !important;
 }
 
 .card:focus .cardContent,
-.card:focus .cardImageContainer {
-  outline: 2px solid rgba(224, 0, 42, 0.70);
-  outline-offset: 2px;
+.card:focus .cardImageContainer,
+.card:focus-within .cardContent,
+.card:focus-within .cardImageContainer {
+  outline: 2px solid rgba(201, 34, 56, 0.82) !important;
+  outline-offset: 2px !important;
+  border-radius: 14px !important;
+}
+
+/* Art treatment */
+.cardImageContainer,
+.cardContent,
+.cardPadder,
+.blurhash-canvas {
+  border-radius: 14px !important;
 }
 
 .cardImage {
-  filter: brightness(0.94) saturate(0.95);
-  transition: filter 160ms ease;
+  filter: brightness(0.58) saturate(0.82) contrast(1.04) !important;
+  transition: filter 120ms ease !important;
 }
 
 .card:hover .cardImage,
-.card:focus .cardImage {
-  filter: brightness(1.04) saturate(1.02);
+.card:focus .cardImage,
+.card:focus-within .cardImage {
+  filter: brightness(0.64) saturate(0.88) contrast(1.05) !important;
 }
 
+/* Typography inside cards */
 .cardText,
-.cardText-first,
-.listItemBodyText {
+.cardText-first {
   color: var(--sc-text) !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.01em !important;
+}
+
+.cardText-secondary,
+.secondaryText {
+  color: var(--sc-muted) !important;
+  font-weight: 400 !important;
+  letter-spacing: 0 !important;
+}
+
+.cardTextContainer,
+.cardFooter {
+  padding-top: 0.15rem !important;
+}
+
+/* Overlay buttons */
+.cardOverlayFab-primary,
+.cardOverlayButton,
+.cardOverlayContainer button {
+  background: rgba(14, 16, 19, 0.72) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #f3f5f7 !important;
+}
+
+.cardOverlayFab-primary:hover,
+.cardOverlayButton:hover,
+.cardOverlayContainer button:hover {
+  background: rgba(201, 34, 56, 0.16) !important;
+  border-color: rgba(201, 34, 56, 0.22) !important;
 }
 
 /* =========================================================
-   Module 15: Progress / Indicators
+   09. HOME SHORTCUT / CATEGORY TILE FEEL
    ========================================================= */
 
+/*
+ This is the "make it look like the mock dashboard" part.
+ Category/shortcut tiles become more dashboard-like:
+ - slightly larger
+ - landscape / feature-tile feel
+ - cleaner titles and subtitle spacing
+*/
+
+.homePage .cardScalable {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(20, 23, 27, 0.96) 0%,
+      rgba(13, 15, 18, 0.98) 100%
+    ) !important;
+}
+
+.homePage .cardImage {
+  filter: brightness(0.50) saturate(0.80) contrast(1.04) !important;
+}
+
+.homePage .card:hover .cardImage,
+.homePage .card:focus .cardImage,
+.homePage .card:focus-within .cardImage {
+  filter: brightness(0.58) saturate(0.86) contrast(1.05) !important;
+}
+
+.homePage .cardText-first {
+  font-size: 1.02rem !important;
+  font-weight: 620 !important;
+}
+
+.homePage .cardText-secondary {
+  font-size: 0.92rem !important;
+  color: #9099a4 !important;
+}
+
+/* Give home cards a cleaner footprint */
+.homePage .card {
+  margin-bottom: 4px !important;
+}
+
+/* If the row is using square/landscape entry cards, give them a tile feel */
+.homePage .squareCard .cardScalable,
+.homePage .backdropCard .cardScalable,
+.homePage .landscapeCard .cardScalable,
+.homePage .thumbCard .cardScalable {
+  border-radius: 16px !important;
+}
+
+/* =========================================================
+   10. CONTINUE WATCHING / POSTER ROW FEEL
+   ========================================================= */
+
+/* Keep posters cleaner, less cluttered */
+.portraitCard .cardScalable {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(18, 21, 25, 0.96) 0%,
+      rgba(12, 14, 17, 0.98) 100%
+    ) !important;
+}
+
+.portraitCard .cardScalable::before {
+  opacity: 0.50;
+}
+
+.portraitCard .cardScalable::after {
+  width: 32px;
+  height: 3px;
+  left: 16px;
+  bottom: 12px;
+}
+
+.portraitCard .cardText-first {
+  font-size: 0.98rem !important;
+}
+
+.portraitCard .cardText-secondary {
+  font-size: 0.88rem !important;
+}
+
+/* Better progress bars */
+[class*="MuiLinearProgress-root"],
 .itemProgressBar {
-  background: rgba(255, 255, 255, 0.10) !important;
+  background-color: rgba(255, 255, 255, 0.08) !important;
 }
 
-.itemProgressBarForeground {
-  background: linear-gradient(90deg, #780014, var(--sc-red-bright)) !important;
+[class*="MuiLinearProgress-bar"],
+.itemProgressBarForeground,
+.mdl-slider-background-lower {
+  background: linear-gradient(90deg, var(--sc-red-dark), var(--sc-red-bright)) !important;
 }
 
+/* Badge-like metadata */
 .playedIndicator,
 .countIndicator,
-.fullSyncIndicator {
-  color: #fff4f6 !important;
-  background: linear-gradient(135deg, #780014, var(--sc-red-bright)) !important;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.42) !important;
+.fullSyncIndicator,
+.mediaSourceIndicator,
+[class*="MuiBadge-badge"] {
+  color: #fff !important;
+  background: var(--sc-red) !important;
+  box-shadow: 0 2px 7px rgba(0, 0, 0, 0.22) !important;
 }
 
 /* =========================================================
-   Module 16: Buttons
-   Raised/action buttons only. Icon buttons retain Jellyfin geometry.
+   11. BUTTONS / CONTROLS
    ========================================================= */
 
+[class*="MuiButton-root"],
 .raised:not(.paper-icon-button-light),
 .button-submit {
-  color: var(--sc-text) !important;
-  background-color: rgba(26, 8, 12, 0.88) !important;
-  background-image: linear-gradient(180deg, rgba(30, 8, 14, 0.88), rgba(8, 2, 4, 0.92)) !important;
-  border-color: rgba(176, 0, 31, 0.24) !important;
   border-radius: 10px !important;
+  font-weight: 700 !important;
+}
+
+[class*="MuiButton-containedPrimary"],
+[class*="MuiButton-containedSecondary"],
+.button-submit {
+  color: #fff !important;
+  background: linear-gradient(180deg, #dc2a42 0%, #be2035 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22) !important;
+}
+
+[class*="MuiButton-containedPrimary"]:hover,
+[class*="MuiButton-containedSecondary"]:hover,
+.button-submit:hover {
+  background: linear-gradient(180deg, #e62d46 0%, #c92238 100%) !important;
+}
+
+[class*="MuiButton-outlined"] {
+  color: var(--sc-text-soft) !important;
+  border-color: rgba(201, 34, 56, 0.16) !important;
+  background: rgba(201, 34, 56, 0.02) !important;
+}
+
+[class*="MuiButton-outlined"]:hover {
+  color: var(--sc-text) !important;
+  border-color: rgba(201, 34, 56, 0.30) !important;
+  background: rgba(201, 34, 56, 0.07) !important;
+}
+
+.raised:not(.paper-icon-button-light) {
+  color: var(--sc-text) !important;
+  background: var(--sc-surface-3) !important;
+  border-color: rgba(255, 255, 255, 0.05) !important;
 }
 
 .raised:not(.paper-icon-button-light):hover {
-  background-color: rgba(90, 0, 20, 0.78) !important;
-  border-color: rgba(224, 0, 42, 0.40) !important;
-}
-
-.button-submit {
-  color: #fff4f6 !important;
-  background-image: linear-gradient(135deg, #780014, #a0001d 58%, #d80029) !important;
+  background: #262c34 !important;
+  border-color: rgba(201, 34, 56, 0.14) !important;
 }
 
 .paper-icon-button-light {
-  color: var(--sc-text) !important;
+  color: var(--sc-text-soft) !important;
 }
 
 .paper-icon-button-light:hover:not(:disabled) {
-  color: #ff657a !important;
-  background-color: rgba(176, 0, 31, 0.14) !important;
+  color: var(--sc-text) !important;
+  background-color: rgba(201, 34, 56, 0.08) !important;
+}
+
+/* switches / toggles */
+[class*="MuiSwitch-switchBase"].Mui-checked {
+  color: var(--sc-red-bright) !important;
+}
+
+[class*="MuiSwitch-switchBase"].Mui-checked + [class*="MuiSwitch-track"] {
+  background-color: var(--sc-red) !important;
+  opacity: 0.56 !important;
+}
+
+[class*="MuiCheckbox-root"].Mui-checked,
+[class*="MuiRadio-root"].Mui-checked,
+[class*="MuiSlider-root"] {
+  color: var(--sc-red) !important;
 }
 
 /* =========================================================
-   Module 17: Dialogs / Sheets / Menus
+   12. PANELS / DIALOGS / MENUS
    ========================================================= */
 
+[class*="MuiDialog-paper"],
+[class*="MuiMenu-paper"],
+[class*="MuiPopover-paper"],
 .dialog,
 .actionSheet,
 .popup {
   color: var(--sc-text) !important;
-  background-color: rgba(8, 2, 5, 0.98) !important;
-  background-image:
-    radial-gradient(circle at top left, rgba(120, 0, 26, 0.12), transparent 36%),
-    linear-gradient(145deg, rgba(13, 4, 8, 0.98), rgba(0, 0, 0, 0.98)) !important;
-  border: 1px solid rgba(176, 0, 31, 0.24) !important;
-  border-radius: 14px !important;
-  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.72) !important;
+  background: var(--sc-surface) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-top-color: rgba(201, 34, 56, 0.14) !important;
+  border-radius: var(--sc-radius-lg) !important;
+  box-shadow: var(--sc-shadow-mid) !important;
 }
 
-/* Lists are lists — no giant dialog shadow/border around them. */
 .paperList {
-  background-color: rgba(8, 2, 5, 0.48) !important;
-  border-radius: 10px !important;
+  background-color: var(--sc-surface) !important;
+  border-radius: var(--sc-radius-md) !important;
 }
 
-/* =========================================================
-   Module 18: Inputs
-   ========================================================= */
-
-.emby-input,
-.emby-select,
-.emby-textarea {
+[class*="MuiSnackbarContent-root"] {
   color: var(--sc-text) !important;
-  background-color: rgba(0, 0, 0, 0.38) !important;
-  border-color: rgba(176, 0, 31, 0.26) !important;
-  border-radius: 9px !important;
+  background: var(--sc-surface-2) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-left: 2px solid rgba(201, 34, 56, 0.55) !important;
+  border-radius: 12px !important;
+  box-shadow: var(--sc-shadow-mid) !important;
 }
 
-.emby-input:focus,
-.emby-select:focus,
-.emby-textarea:focus {
-  border-color: rgba(224, 0, 42, 0.72) !important;
-  box-shadow: 0 0 0 2px rgba(224, 0, 42, 0.12) !important;
+[class*="MuiTooltip-tooltip"] {
+  color: var(--sc-text) !important;
+  background: #1d2127 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: var(--sc-shadow-low) !important;
+}
+
+[class*="MuiChip-root"] {
+  color: var(--sc-text-soft) !important;
+  background: var(--sc-surface-3) !important;
+  border-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+[class*="MuiAlert-root"] {
+  color: var(--sc-text) !important;
+  background-color: var(--sc-surface-2) !important;
+  border-color: rgba(201, 34, 56, 0.12) !important;
 }
 
 /* =========================================================
-   Module 19: Episodes / Rows
-   No custom margins or minimum heights.
+   13. LISTS / TABLES / EPISODES
    ========================================================= */
 
 .listItem,
 .paperList .listItem {
   color: var(--sc-text) !important;
-  background-color: rgba(10, 3, 6, 0.34) !important;
-  border: 1px solid rgba(176, 0, 31, 0.10) !important;
-  border-radius: 10px !important;
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  border-radius: var(--sc-radius-md) !important;
 }
 
 .listItem:hover,
 .listItem:focus-within {
-  background-color: rgba(30, 8, 14, 0.54) !important;
-  border-color: rgba(224, 0, 42, 0.24) !important;
+  background: rgba(255, 255, 255, 0.025) !important;
+  border-color: rgba(201, 34, 56, 0.08) !important;
 }
 
 .listItemImage,
 .listItemImageButton,
 .chapterThumb {
-  border-radius: 9px !important;
+  border-radius: var(--sc-radius-sm) !important;
+}
+
+[class*="MuiTableCell-root"] {
+  color: var(--sc-text) !important;
+  border-bottom-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+[class*="MuiTableRow-root"]:hover {
+  background-color: rgba(201, 34, 56, 0.04) !important;
 }
 
 /* =========================================================
-   Module 20: Detail Pages
-   Preserve Jellyfin's own layout and artwork positioning.
+   14. DETAIL PAGE
    ========================================================= */
 
 .detailPageWrapperContainer {
@@ -1120,41 +955,69 @@ h3 {
 }
 
 .detailRibbon {
-  background-color: rgba(8, 2, 5, 0.74) !important;
+  color: var(--sc-text) !important;
+  background: rgba(20, 23, 27, 0.92) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(201, 34, 56, 0.10);
 }
 
 .detailButton {
-  color: var(--sc-text) !important;
+  color: var(--sc-text-soft) !important;
 }
 
-.detailButton:hover {
-  color: #ff657a !important;
+.detailButton:hover,
+.detailButton:focus {
+  color: var(--sc-red-bright) !important;
 }
 
 /* =========================================================
-   Module 21: Video / Now Playing
+   15. LIVE TV / GUIDE
+   ========================================================= */
+
+.channelPrograms,
+.guide-channelHeaderCell,
+.programCell {
+  border-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+.programCell-active {
+  background: rgba(201, 34, 56, 0.12) !important;
+  box-shadow: inset 3px 0 0 var(--sc-red) !important;
+}
+
+.guide-date-tab-button {
+  color: var(--sc-muted) !important;
+}
+
+.guide-date-tab-button.emby-tab-button-active {
+  color: var(--sc-text) !important;
+  border-bottom-color: var(--sc-red) !important;
+}
+
+/* =========================================================
+   16. VIDEO OSD / NOW PLAYING
    ========================================================= */
 
 .videoOsdBottom {
-  background: linear-gradient(0deg, rgba(0, 0, 0, 0.82), rgba(0, 0, 0, 0)) !important;
+  background: linear-gradient(0deg, rgba(8, 9, 11, 0.90), rgba(8, 9, 11, 0)) !important;
 }
 
 .skinHeader-withBackground.osdHeader,
 .osdHeader {
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.78), rgba(0, 0, 0, 0)) !important;
+  background: linear-gradient(180deg, rgba(8, 9, 11, 0.82), rgba(8, 9, 11, 0)) !important;
   border-bottom-color: transparent !important;
   box-shadow: none !important;
 }
 
 .nowPlayingBar {
-  background-color: rgba(8, 2, 5, 0.96) !important;
-  border-top: 1px solid rgba(176, 0, 31, 0.20) !important;
+  background: #14171b !important;
+  border-top: 1px solid rgba(201, 34, 56, 0.10) !important;
 }
 
 .videoOsdBottom .paper-icon-button-light,
 .osdHeader .paper-icon-button-light,
 .nowPlayingBar .paper-icon-button-light {
-  color: #f6e9eb !important;
+  color: var(--sc-text) !important;
   background-color: transparent !important;
   border-color: transparent !important;
   box-shadow: none !important;
@@ -1163,46 +1026,210 @@ h3 {
 .videoOsdBottom .paper-icon-button-light:hover,
 .osdHeader .paper-icon-button-light:hover,
 .nowPlayingBar .paper-icon-button-light:hover {
-  color: #ff657a !important;
-  background-color: rgba(176, 0, 31, 0.18) !important;
-}
-
-.mdl-slider-background-lower,
-.nowPlayingBar .itemProgressBarForeground {
-  background: linear-gradient(90deg, #780014, var(--sc-red-bright)) !important;
+  color: #fff !important;
+  background-color: rgba(201, 34, 56, 0.08) !important;
 }
 
 .mdl-slider::-webkit-slider-thumb,
 .mdl-slider::-moz-range-thumb {
-  background: #f6e9eb !important;
-  box-shadow: 0 0 0 3px rgba(224, 0, 42, 0.24) !important;
+  background: #fff !important;
+  box-shadow: 0 0 0 3px rgba(201, 34, 56, 0.20) !important;
 }
 
 .sliderBubble {
   color: var(--sc-text) !important;
-  background: rgba(8, 2, 5, 0.96) !important;
-  border: 1px solid rgba(176, 0, 31, 0.28) !important;
-}
-
-/* Intro Skipper uses its own scoped classes. Theme only its palette. */
-.skip-button {
-  --skip-btn-bg: rgba(8, 2, 5, 0.88);
-  --skip-btn-bg-hover: #f6e9eb;
-  --skip-btn-border-color: rgba(255, 101, 122, 0.72);
-  --skip-btn-text-color: #f6e9eb;
-  --skip-btn-text-color-hover: #050206;
-  --skip-btn-progress-color: rgba(224, 0, 42, 0.86);
+  background: var(--sc-surface-2) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
 }
 
 /* =========================================================
-   Module 90: TV Layout
-   Keep Jellyfin's TV sizing/spacing intact; only increase focus visibility.
+   17. LOGIN PAGE
+   ========================================================= */
+
+#loginPage,
+.loginPage {
+  min-height: 100vh !important;
+  color: var(--sc-text) !important;
+  background:
+    radial-gradient(circle at 18% 10%, rgba(201, 34, 56, 0.08), transparent 28%),
+    linear-gradient(145deg, #111419 0%, #0b0c0f 54%, #08090b 100%) !important;
+}
+
+#loginPage .skinHeader,
+.loginPage .skinHeader,
+#loginPage .mainDrawer,
+.loginPage .mainDrawer,
+#loginPage .pageTitleWithDefaultLogo,
+.loginPage .pageTitleWithDefaultLogo,
+#loginPage .pageTitle,
+.loginPage .pageTitle,
+#loginPage img[src*="jellyfin"],
+.loginPage img[src*="jellyfin"],
+#loginPage .logoIcon,
+.loginPage .logoIcon {
+  display: none !important;
+}
+
+#loginPage .readOnlyContent,
+.loginPage .readOnlyContent {
+  max-width: 430px !important;
+  margin: 0 auto !important;
+}
+
+#loginPage .readOnlyContent::before,
+.loginPage .readOnlyContent::before {
+  content: "STITCHCORE\A MEDIA";
+  white-space: pre;
+  display: block;
+  margin: 0 0 1.05rem;
+  color: var(--sc-text);
+  text-align: center;
+  font-size: 1.82rem;
+  line-height: 1.05;
+  font-weight: 820;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+#loginPage .manualLoginForm,
+.loginPage .manualLoginForm {
+  position: relative;
+  max-width: 430px !important;
+  margin: 0 auto !important;
+  padding: 1.35rem 1.25rem 1.2rem !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-top-color: rgba(201, 34, 56, 0.20) !important;
+  border-radius: 16px !important;
+  background: var(--sc-surface) !important;
+  box-shadow: var(--sc-shadow-mid) !important;
+}
+
+#loginPage .manualLoginForm::before,
+.loginPage .manualLoginForm::before {
+  content: "PRIVATE ACCESS";
+  display: block;
+  margin: 0 0 0.95rem;
+  padding-bottom: 0.7rem;
+  color: var(--sc-muted);
+  font-size: 0.67rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-align: center;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+#loginPage .manualLoginForm::after,
+.loginPage .manualLoginForm::after {
+  content: "";
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  top: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--sc-red), transparent);
+  border-radius: 999px;
+  pointer-events: none;
+}
+
+#loginPage .emby-input,
+.loginPage .emby-input,
+#loginPage input,
+.loginPage input {
+  color: var(--sc-text) !important;
+  background: #0f1216 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 10px !important;
+}
+
+#loginPage .emby-input:focus,
+.loginPage .emby-input:focus,
+#loginPage input:focus,
+.loginPage input:focus {
+  border-color: var(--sc-red) !important;
+  box-shadow: 0 0 0 2px rgba(201, 34, 56, 0.10) !important;
+}
+
+#loginPage .button-submit,
+.loginPage .button-submit,
+#loginPage button[type="submit"],
+.loginPage button[type="submit"] {
+  color: #fff !important;
+  background: linear-gradient(180deg, #dc2a42 0%, #be2035 100%) !important;
+  border: 0 !important;
+  border-radius: 10px !important;
+  font-weight: 800 !important;
+}
+
+#loginPage .emby-button:not(.button-submit),
+.loginPage .emby-button:not(.button-submit),
+#loginPage a,
+.loginPage a {
+  color: var(--sc-text-soft) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+#loginPage a:hover,
+.loginPage a:hover {
+  color: var(--sc-red-bright) !important;
+}
+
+/* =========================================================
+   18. SCROLLBARS
+   ========================================================= */
+
+html,
+body,
+.mainDrawer-scrollContainer,
+.scrollFrame,
+.smoothScrollY {
+  scrollbar-width: thin;
+  scrollbar-color: #626b76 #0b0c0f;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+.mainDrawer-scrollContainer::-webkit-scrollbar,
+.scrollFrame::-webkit-scrollbar,
+.smoothScrollY::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+html::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track,
+.mainDrawer-scrollContainer::-webkit-scrollbar-track,
+.scrollFrame::-webkit-scrollbar-track,
+.smoothScrollY::-webkit-scrollbar-track {
+  background: #0b0c0f;
+}
+
+html::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb,
+.mainDrawer-scrollContainer::-webkit-scrollbar-thumb,
+.scrollFrame::-webkit-scrollbar-thumb,
+.smoothScrollY::-webkit-scrollbar-thumb {
+  background: #626b76;
+  border-radius: 999px;
+}
+
+html::-webkit-scrollbar-thumb:hover,
+body::-webkit-scrollbar-thumb:hover,
+.mainDrawer-scrollContainer::-webkit-scrollbar-thumb:hover,
+.scrollFrame::-webkit-scrollbar-thumb:hover,
+.smoothScrollY::-webkit-scrollbar-thumb:hover {
+  background: #798390;
+}
+
+/* =========================================================
+   19. TV / FOCUS
    ========================================================= */
 
 .layout-tv .card:focus .cardContent,
 .layout-tv .card:focus .cardImageContainer {
-  outline: 3px solid rgba(224, 0, 42, 0.82);
-  outline-offset: 3px;
+  outline: 3px solid var(--sc-red-bright) !important;
+  outline-offset: 3px !important;
 }
 
 .layout-tv .navMenuOption-selected {
@@ -1210,7 +1237,80 @@ h3 {
 }
 
 .layout-tv .paper-icon-button-light:focus,
-.layout-tv .raised:focus {
-  outline: 2px solid rgba(224, 0, 42, 0.72);
-  outline-offset: 2px;
+.layout-tv .raised:focus,
+.navMenuOption:focus,
+[class*="MuiButtonBase-root"].Mui-focusVisible {
+  outline: 2px solid var(--sc-red-bright) !important;
+  outline-offset: 2px !important;
+}
+
+/* =========================================================
+   20. MOBILE / RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1200px) {
+  :root {
+    --sc-sidebar-width: 230px;
+    --sc-page-pad: 20px;
+  }
+}
+
+@media (max-width: 900px) {
+  .homePage .mainPageBody,
+  .libraryPage .mainPageBody,
+  .page .mainPageBody {
+    padding-top: 12px !important;
+  }
+
+  .cardBox .cardScalable::after,
+  .cardScalable::after {
+    width: 30px;
+  }
+}
+
+@media (max-width: 600px) {
+  #loginPage .readOnlyContent,
+  .loginPage .readOnlyContent {
+    max-width: 100% !important;
+  }
+
+  #loginPage .readOnlyContent::before,
+  .loginPage .readOnlyContent::before {
+    font-size: 1.44rem;
+    letter-spacing: 0.12em;
+  }
+
+  #loginPage .manualLoginForm,
+  .loginPage .manualLoginForm {
+    margin: 0 0.8rem !important;
+    padding: 1.18rem 1rem 1.05rem !important;
+    border-radius: 14px !important;
+  }
+
+  .cardBox .cardScalable::before,
+  .cardScalable::before {
+    left: 10px;
+    right: 10px;
+  }
+
+  .cardBox .cardScalable::after,
+  .cardScalable::after {
+    left: 12px;
+    bottom: 12px;
+  }
+}
+
+/* =========================================================
+   21. REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
 }
